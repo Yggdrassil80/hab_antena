@@ -13,7 +13,7 @@ def getMPUDataFromFile():
 
 	mpuData = [float(0), float(0), float(0), float(0), float(0), float(0), float(0)]
         try:
-                with open('/data/chuteless/logs/mpudata.log') as mpudatafile:
+                with open('/data/hab_antena/logs/mpudata.log') as mpudatafile:
                         line = list(mpudatafile)[-1]
                 mdata = line.split('|')
                 mpuData[0] = float(mdata[1])
