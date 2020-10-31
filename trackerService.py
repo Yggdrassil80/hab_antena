@@ -1,3 +1,11 @@
+##################################################################################
+#Proyecto: trackerService					                                     #
+#Autor: Oscar Loras Delgado				                                         #
+#Descricpión: Servicio de tracker experimental para el seguimiento mendiante una #
+#  antena autoapuntada contra el HAB, implica disoner de GPS integrado y una MPU.#
+#  Además de una plataforma mobil con dos ejes de libertad. De momento los       #
+#  actuadores serian servos convencionales. No motores paso a paso               #
+##################################################################################
 from pyorbital import orbital
 
 import numpy as np
