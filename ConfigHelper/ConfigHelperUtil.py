@@ -13,6 +13,15 @@ import logging
 
 CONF_PATH = "/data/hab_antena/conf/tracker.conf"
 
+def getAntenaID():
+    try:
+        cfg = ConfigParser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("TCK", "idAntena")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "valor vacio"
 def getTiempoEntreMov():
     try:
         cfg = ConfigParser.ConfigParser()
@@ -20,10 +29,10 @@ def getTiempoEntreMov():
         t = cfg.get("TCK", "tiempoEntreMov")
         return int(t)
     except:
-        #loggerLog.error("[ConfigHelper][isMPUActivo] ERROR");
+        #loggerLog.error("[ConfigHelper][getTiempoEntreMov] ERROR");
         return "valor vacio"
 
-#Metodo que recupera la posición de la antena de la configuracion
+#Metodo que recupera la posición de la antena de la configuracion (se asume antena estática y sin módulo GPS)
 def getAntenaPos():
     try:
         cfg = ConfigParser.ConfigParser()
@@ -33,7 +42,7 @@ def getAntenaPos():
         alt = cfg.get("GPS", "alt")
         return float(lat), float(lat), int(alt)
     except:
-        #loggerLog.error("[ConfigHelper][isMPUActivo] ERROR");
+        #loggerLog.error("[ConfigHelper][getAntenaPos] ERROR");
         return [0.0, 0.0, 0]
 
 #Metodo que informa sobre el estado de activacion del MPU
@@ -55,7 +64,7 @@ def isORIActivo():
         t = cfg.get("ORI", "ori_activo")
         return int(t)
     except:
-        #loggerLog.error("[ConfigHelper][isMPUActivo] ERROR");
+        #loggerLog.error("[ConfigHelper][isORIActivo] ERROR");
         return "valor vacio"
 
 #Metodo que informa sobre el estado de activacion del MPU
@@ -66,7 +75,7 @@ def isGPSActivo():
         t = cfg.get("GPS", "gps_activo")
         return int(t)
     except:
-        #loggerLog.error("[ConfigHelper][isMPUActivo] ERROR");
+        #loggerLog.error("[ConfigHelper][isGPSActivo] ERROR");
         return "valor vacio"
 
 #Metodo que recupera el tiempo de muestreo del MPU
@@ -77,7 +86,7 @@ def getTiempoMuestreoMPU():
         t = cfg.get("MPU", "tiempoMuestreoMPU")
         return int(t)
     except:
-        #loggerLog.error("[ConfigHelper][getTiempoMuestreoGPS] ERROR");
+        #loggerLog.error("[ConfigHelper][getTiempoMuestreoMPU] ERROR");
         return "valor vacio"
 
 #metodo que recupera el tiempo de muestreo del GPS

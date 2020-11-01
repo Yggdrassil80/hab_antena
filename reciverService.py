@@ -46,8 +46,10 @@ LOG_PATH = "/data/hab_antena/logs/recivedData.log"
 
 recieved = ""
 buffer = ""
+antenaID = ConfigHelper.getAntenaID()
+loggerLog.info("[ReciverService][Conf] AntenaId: " + str(antenaID))
 
-loggerLog.info("[ReciverService][Conf] Arrancando receptor...: " + puertoUSB.portstr);
+loggerLog.info("[ReciverService][Conf] Arrancando receptor...: " + puertoUSB.portstr)
 
 while True:
     try:
@@ -66,17 +68,17 @@ while True:
                     alt = gpsdata[0]
                     lat = gpsdata[1]
                     lon = gpsdata[2]
-                    posicionAntena = lat + "," + lon + "|" + alt + "|"
+                    posicionAntena = lat + "," + lon + "|" + alt + "|" + antenaID + "|"
                     loggerLog.info("[ReciverService][Conf] Añadiendo a la traza la ubicación GPS de la antena...")
                     f.write(buffer + posicionAntena)
                 #Si no esta activo no se hace nada y se registra tal cual todo lo que se reciva
                 else:
-                    f.write(buffer)
+                    f.write(buffer + antenaID + "|")
             except Exception as eGps:
                 #Si hubiera un error con la captura de datos del GPS en la antena, para asegurar que no se van a perder trazas, se escribe
                 #la información entrante en el archivo sin datos de GPS igualmente.
                 loggerLog.error("[ReciverService][ERROR] Ha habido un problema con el módulo GPS de la antena " + str(eGps))
-                f.write(buffer)
+                f.write(buffer + antenaID + "|")
 
             f.close()
             loggerLog.info("[ReciverService][Conf] Archivo de datos raw cerrado")
