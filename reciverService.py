@@ -15,6 +15,9 @@ import datetime
 import binascii
 import logging
 
+import GPSHelper
+import ConfigHelper
+
 #Creacion del logger para los logs del servicio
 loggerLog = logging.getLogger('server_logger')
 loggerLog.setLevel(logging.DEBUG)
@@ -55,7 +58,26 @@ while True:
             loggerLog.info("[ReciverService][Conf] Generando archivo de datos raw...")
             f = open (LOG_PATH, "a")
             loggerLog.info("[ReciverService][Conf] Escribiendo en archivo de datos raw...")
-            f.write(buffer)
+            #Si esta activado el modulo GPS se añade la información al final de la traza
+            try:
+                isGpsActive=ConfigHelper.isGPSActivo()
+                if (isGpsActive):
+                    gpsdata = GPSHelper.getGPSDataFromFile()
+                    alt = gpsdata[0]
+                    lat = gpsdata[1]
+                    lon = gpsdata[2]
+                    posicionAntena = lat + "," + lon + "|" + alt + "|"
+                    loggerLog.info("[ReciverService][Conf] Añadiendo a la traza la ubicación GPS de la antena...")
+                    f.write(buffer + posicionAntena)
+                #Si no esta activo no se hace nada y se registra tal cual todo lo que se reciva
+                else:
+                    f.write(buffer)
+            except Exception as eGps:
+                #Si hubiera un error con la captura de datos del GPS en la antena, para asegurar que no se van a perder trazas, se escribe
+                #la información entrante en el archivo sin datos de GPS igualmente.
+                loggerLog.error("[ReciverService][ERROR] Ha habido un problema con el módulo GPS de la antena " + str(eGps))
+                f.write(buffer)
+
             f.close()
             loggerLog.info("[ReciverService][Conf] Archivo de datos raw cerrado")
             buffer = ""
