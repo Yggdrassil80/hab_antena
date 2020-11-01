@@ -42,6 +42,12 @@ Los pasos son:
 sudo apt get update
 ```
 
+1.1. Descargar git para poder descargar posteriormente el código de la sonda
+
+```
+sudo apt install git
+```
+
 2. Conectar todos los sistemas periféricos (gps y Lora(rf) principalmente)
 
 3. Instalar librerias de Python3 de apoyo. Las librerias de python necesarias son las siguientes:
@@ -134,6 +140,22 @@ sudo systemctl stop [nombre_servicio].service
 ### Activación I2C en Raspbian
 
 Los componentes que necesita la antena no requieren configuración del bus I2C.
+
+### Configuración USBs
+
+Todos los puertos usbs, una vez conectados, están disponibles, como si fueran un archivo, en la raspberry en el directorio /dev.
+
+Normalmente, vienen descritos como
+
+- ttyUSB0
+- ttyUSB1
+...
+
+Para poder configurarlos en el archivo de configuración, para configurar el RF o el GPS, deberá situarse en la variable correspondiente el path absoluto de estos archivos.
+
+- /dev/ttyUSB0
+- /dev/ttyUSB1
+...
 
 ## Logging
 
