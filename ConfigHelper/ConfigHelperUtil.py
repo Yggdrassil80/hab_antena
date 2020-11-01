@@ -15,16 +15,17 @@ CONF_PATH = "/data/hab_antena/conf/tracker.conf"
 
 def getAntenaID():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("TCK", "idAntena")
         return str(t)
     except:
         #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
         return "valor vacio"
+
 def getTiempoEntreMov():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("TCK", "tiempoEntreMov")
         return int(t)
@@ -35,7 +36,7 @@ def getTiempoEntreMov():
 #Metodo que recupera la posición de la antena de la configuracion (se asume antena estática y sin módulo GPS)
 def getAntenaPos():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         lat = cfg.get("GPS", "lat")
         lon = cfg.get("GPS", "lon")
@@ -48,7 +49,7 @@ def getAntenaPos():
 #Metodo que informa sobre el estado de activacion del MPU
 def isMPUActivo():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("MPU", "mpu_activo")
         return int(t)
@@ -59,7 +60,7 @@ def isMPUActivo():
 #Metodo que informa sobre el estado de activacion de la brujula
 def isORIActivo():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("ORI", "ori_activo")
         return int(t)
@@ -70,7 +71,7 @@ def isORIActivo():
 #Metodo que informa sobre el estado de activacion del MPU
 def isGPSActivo():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("GPS", "gps_activo")
         return int(t)
@@ -81,7 +82,7 @@ def isGPSActivo():
 #Metodo que recupera el tiempo de muestreo del MPU
 def getTiempoMuestreoMPU():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("MPU", "tiempoMuestreoMPU")
         return int(t)
@@ -92,7 +93,7 @@ def getTiempoMuestreoMPU():
 #metodo que recupera el tiempo de muestreo del GPS
 def getTiempoMuestreoGPS():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         t = cfg.get("GPS", "tiempoMuestreoGPS")
         return int(t)
@@ -103,7 +104,7 @@ def getTiempoMuestreoGPS():
 #Metodo que recupera el puerto del usb de RF
 def getUsbRF():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         puerto = cfg.get("RF", "usbRF")
         return puerto
@@ -114,7 +115,7 @@ def getUsbRF():
 #Metodo que recupera el puerto del usb de GPS
 def getUsbGPS():
     try:
-        cfg = ConfigParser.ConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
         puerto = cfg.get("GPS", "usbGPS")
         return puerto

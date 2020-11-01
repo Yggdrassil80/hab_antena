@@ -1,1 +1,6 @@
 [2020-11-01 18:27:24][INFO][[ReciverService][Conf] Puerto USB RF: Puerto Vacio]
+[2020-11-01 18:35:24][INFO][[ReciverService][Conf] Puerto USB RF: /dev/ttyUSB0]
+[2020-11-01 18:35:24][INFO][[ReciverService][Conf] AntenaId: valor vacio]
+[2020-11-01 18:35:24][INFO][[ReciverService][Conf] Arrancando receptor...: /dev/ttyUSB0]
+[2020-11-01 18:35:24][ERROR][[ReciverService][ERROR] argument must be an int, or have a fileno() method.]
+[2020-11-01 18:35:29][ERROR][[ReciverService][ERROR] argument must be an int, or have a fileno() method.]
