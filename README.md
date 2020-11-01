@@ -59,6 +59,17 @@ y la forma de instalarlas es mediante la instrucción
    pip3 install [nombre_libreria]
 ```
 
+3.1. Crear el directorio de trabajo, data, mediante las siguientes instrucciones. 
+
+<b>IMPORTANTE:</b> Todas las rutas de configuración estan pensadas sobre este directorio, no se recomienda cambiar a no ser que se tenga muy claro que deberá revisarse ben todo el código para reemplazar este directorio base por cualquier otro que se escoja.
+
+```
+cd /
+mkdir data
+sudo chown -R pi:pi data/
+sudo chmod -R 777 data/
+```
+
 4. Realizar un clone del proyecto hab_antena sobre la raspberry
    El proceso es simple.
    1. Abrir una consola del SO.
@@ -68,6 +79,13 @@ y la forma de instalarlas es mediante la instrucción
 git clone https://github.com/Yggdrassil80/hab_antena
 ```
 <b>IMPORTANTE</b>: Inmediatamente despúes de realizar esta accion, todo el código de la antena se encontrará en /data/hab_antena. Esto implica que todas las configuraciones dependeran de ese path base.
+
+4.1. Crear el directorio de logs, mediante la instruccion
+
+```
+cd /data/hab_antena
+mkdir logs
+```
 
 5. Configurar el archivo de configuración.
    1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/hav.conf
