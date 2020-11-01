@@ -96,6 +96,8 @@ mv -rf /data/hab_antena /data/nombre_nuevo
 
 Como se ha indicado, la idea es que cada componente nuevo que se agrege, se conciba como un servicio que se ejecute en el arranque de la pi en un orden preestablecido y con las dependencias que se desee.
 
+En el código descargado de git ya se dispone de los diferentes archivos .service preparados para ser arrancados localmente. Es importante que se arranques los servicios de este modo, ya que esto asegura que al encender la pi o tras su reinicio, estos servicios se activen <b>automáticamente</b>.
+
 Para poder arrancar el servicio de un componente:
 
 1. Se debe disponer del archivo [Nombre_modulo.service] donde se ha de describir, genericamente, lo siguiente:
