@@ -191,11 +191,13 @@ donde,
 - usbGPS: corresponde al puerto USB al que esta conectado el adaptador cp2102 del GPS. Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
 - tiempoMuestreoGPS: que informa sobre el tiempo entre muestras de datos de GPS. Es importante destacar que el GPS no empieza a dar datos de posición de forma inmediata cuando arranca, sino que requeriere unos minutos de "autocalibrado" antes de empezar a recibir paquetes NMEA con datos (GCRMC y GCACC). Luego, suponiendo la configuración correcta de USB, se puede entender como normal que no haya datos de posición nada mas arrancar.
 
+Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad de disponer, en la misma traza recibida, de las coordenadas GPS + altura del HAB y de la antena a la vez, con lo que, eventualmente, se podría calcular la distancia real exacta entre antena y HAB.
+
 ### RF
 
 #### Introducción
 
-El modulo de RF que se utilizará es un ebyte E32-TTL-100 que esta basado en la tecnologia LoRa (Long Range) del chip SX1278 de Semtech.
+El modulo de RF que se utilizará para la recepción es uno simetrico al uso en el HAB, es un ebyte E32-TTL-100 que esta basado en la tecnologia LoRa (Long Range) del chip SX1278 de Semtech.
 
 Esta tecnología permite el envio/recepción de mensajes con muy poca energia a grandes distancias a coste eso si de un ancho de banda muy bajo.
 
@@ -252,15 +254,16 @@ donde,
 
 #### Introducción
 
-Como se ha comentado, todos los componentes vuelcan los datos que generan directamente a archivos de log para evitar interferir en los procesos de envio o de toma de datos de otros sensores.
-
-Este módulo se encarga de TODO
+En este caso, el módulo de recepción se denomina reciverService y es el encargado de permanecer escuchando las trazas entrantes del HAB
 
 #### Descripción
 
-Todos los archivos de datos de los sensores tienen la forma siguiente:
+En esencia se trata de un proceso basado en el chip de RF explicado en el módulo de RF de esta documentación que espera recibir, por el puerto serie de la Pi donde este conectado (a través de un CP2102) los bytes de una traza enviada por el HAB. Dicha información se escribe en un buffer que posteriormente se escribe directamente a un archivo de texto en el local de la pi que se este utilizando.
 
-TODO
+En una misión tipo, es posible que hayan mas de una antena escuhando al HAB, y estas antenas además pueden ser móviles (montadas en vehiculos). Por ese motivo este módulo de software realiza dos tareas adicionales sobre los datos recibidos antes de escribirlos en el archivo de salida.
+
+- Lo primero es añadirle un identificador de antena, que no es mas que una cadena de texto adicional que se identifica de forma únequivoca la antena que ha recibido el dato. Esto es capital, ya que cuando esta información sea llevada a la nube, se mezclará con los datos del resto de antenas, y puede ser necesario tener que identificar que antena recibio que, para acabar de componer todo el vuelo del HAB y así ayudar a eliminar información duplicada.
+- Lo segundo es añadirle, si así se ha configurado, las coordenadas GPS + altura de la propia antena que recibió los datos. Saber donde estaba la antena cuando recibió los datos es crítico para posteriormente, calcular el alcance de la emisión original e incluso ayudar a los vehiculos con antenas a dirigirse hacia lugares donde puedan maximizar la recepción
 
 #### Configuración
 
