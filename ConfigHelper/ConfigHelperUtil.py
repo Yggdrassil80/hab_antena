@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import ConfigParser
+import configparser
 import logging
 
 #loggerLog = logging.getLogger('server_logger-config')
