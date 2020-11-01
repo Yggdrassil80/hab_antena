@@ -55,7 +55,7 @@ def getGPSDataFromFile():
 
 #Metodo que recupera los datos basicos de posicion y altura del GPS
 def getGPSData(ser):
-	
+
 	gpsData = [int(0), float(0), float(0), "KO"]
 	try:
 		#loggerLog.debug("[GPSHelper][getGPSData] Arrancando comunicacion con GPS por puerto: " + port)
@@ -67,20 +67,18 @@ def getGPSData(ser):
 		gpsData = parseGPS_GGA(data)
 		#loggerLog.debug("[GPSHelper][getGPSData] datos del parser: [0: " + str(gpsData[0]) + "][1: " + str(gpsData[1]) + "][2:" + str(gpsData[2]) + " ][3:" + str(gpsData[3]) + " ]")
 		while gpsData[3] != "OK":
-
 			data = ser.readline()
 			#loggerLog.debug("[GPSHelper][getGPSData] Lectura bruta del puerto: " + data)
 			gpsData = parseGPS_GGA(data)
 			#loggerLog.debug("[GPSHelper][getGPSData] Invocando el parser...")
 			time.sleep(0.05)
 		#loggerLog.debug("[GPSHelper][getGPSData] datos del parser: [0: " + str(gpsData[0]) + "][1: " + str(gpsData[1]) + "][2:" + str(gpsData[2]) + " ][3:" + str(gpsData[3]) + " ]")
-        	return gpsData
+		return gpsData
 	except Exception:
 		e = sys.exc_info()[1]
-    		print(e.args[0])
+		print(e.args[0])
 		#loggerLog.error("[GPSHelper][getGPSData] ERROR se retorna objeto invalido:" + e.args[0])
-                return gpsData
-
+		return gpsData
 #def setGPSFlyMode(port):
 #	ser = serial.Serial(port, baudrate = 9600, timeout = 0.5) data = 0xB5, 0x62, 
 #	0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10, 
@@ -113,7 +111,7 @@ def parseGPS_GGA(data):
         		s = data.split(",")
         		if s[7] == '0':
 				#loggerLog.debug("[GPSHelper][parseGPS_GGA] No hay satelites disponibles.")
-           			return
+				return
 			#loggerLog.debug("[GPSHelper][parseGPS_GGA] Satelites disponibles. Detectando campos vacios...")
 			#loggerLog.debug("[GPSHelper][parseGPS_GGA] s2:" + s[2] + "s4:" + s[4] + "s9:" + s[9])
 			if ((s[2] == '') and (s[4] == '') and (s[9] == '')):
@@ -122,9 +120,7 @@ def parseGPS_GGA(data):
 	                	gpsData[1] = float(0)
         	        	gpsData[2] = float(0)
                 		gpsData[3] = "KO"
-
 				return gpsData
-
 			#loggerLog.debug("[GPSHelper][parseGPS_GGA] Datos validos.Recuperando...")
 			time = s[1][0:2] + ":" + s[1][2:4] + ":" + s[1][4:6]
         		lat = decode(s[2])
