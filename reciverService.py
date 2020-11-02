@@ -48,7 +48,6 @@ recieved = ""
 buffer = ""
 antenaID = ConfigHelper.getAntenaID()
 loggerLog.info("[ReciverService][Conf] AntenaId: " + str(antenaID))
-
 loggerLog.info("[ReciverService][Conf] Arrancando receptor...: " + puertoUSB.portstr)
 
 while True:
@@ -87,8 +86,9 @@ while True:
             puertoUSB.flushInput()
             puertoUSB.flushOutput()
 
-        puertoUSB.close()
     except Exception as e:
         loggerLog.error("[ReciverService][ERROR] " + str(e))
         puertoUSB.close()
         time.sleep(5)
+
+puertoUSB.close()

@@ -17,7 +17,7 @@ def getAntenaID():
     try:
         cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
-        t = cfg.get("TCK", "idAntena")
+        t = cfg.get("TCK", "antenaID")
         return str(t)
     except:
         #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
