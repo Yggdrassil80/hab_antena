@@ -5,12 +5,13 @@
   * [Configuraciones Genericas](#configuraciones-genericas)
     + [Generación de Servicios](#generaci-n-de-servicios)
     + [Activación I2C en Raspbian](#activaci-n-i2c-en-raspbian)
+    + [Configuración USBs](#configuraci-n-usbs)
   * [Logging](#logging)
   * [Descripción Componentes](#descripci-n-componentes)
     + [GPS](#gps)
     + [RF](#rf)
-    + [Servicio de Configuración](#servicio-de-configuraci-n)
     + [Proceso Principal](#proceso-principal)
+    + [Servicio de Configuración](#servicio-de-configuraci-n)
   * [Hardware](#hardware)
     + [Diagrama del Hardware](#diagrama-del-hardware)
     + [Bus I2C](#bus-i2c)
@@ -24,7 +25,7 @@ Proyecto para implementar el software de captura y procesamiento de datos de una
 
 ## Introducción
 
-TODO
+En este proyecto se describirán los principales componentes de la antena receptora del proyecto hab_sonda.
 
 ## Diagrama de sistemas
 
@@ -42,15 +43,15 @@ Los pasos son:
 sudo apt get update
 ```
 
-1.1. Descargar git para poder descargar posteriormente el código de la sonda
+2. Descargar git para poder descargar posteriormente el código de la sonda
 
 ```
 sudo apt install git
 ```
 
-2. Conectar todos los sistemas periféricos (gps y Lora(rf) principalmente)
+3. Conectar todos los sistemas periféricos (gps y Lora(rf) principalmente)
 
-3. Instalar librerias de Python3 de apoyo. Las librerias de python necesarias son las siguientes:
+4. Instalar librerias de Python3 de apoyo. Las librerias de python necesarias son las siguientes:
    * scipy
    * ...
    
@@ -59,7 +60,7 @@ y la forma de instalarlas es mediante la instrucción
    pip3 install [nombre_libreria]
 ```
 
-3.1. Crear el directorio de trabajo, data, mediante las siguientes instrucciones. 
+5. Crear el directorio de trabajo, data, mediante las siguientes instrucciones. 
 
 <b>IMPORTANTE:</b> Todas las rutas de configuración estan pensadas sobre este directorio, no se recomienda cambiar a no ser que se tenga muy claro que deberá revisarse ben todo el código para reemplazar este directorio base por cualquier otro que se escoja.
 
@@ -70,7 +71,7 @@ sudo chown -R pi:pi data/
 sudo chmod -R 777 data/
 ```
 
-4. Realizar un clone del proyecto hab_antena sobre la raspberry
+6. Realizar un clone del proyecto hab_antena sobre la raspberry
    El proceso es simple.
    1. Abrir una consola del SO.
    2. Posicionarse en el directorio que se desee (se recomienda /data)
@@ -80,14 +81,14 @@ git clone https://github.com/Yggdrassil80/hab_antena
 ```
 <b>IMPORTANTE</b>: Inmediatamente despúes de realizar esta accion, todo el código de la antena se encontrará en /data/hab_antena. Esto implica que todas las configuraciones dependeran de ese path base.
 
-4.1. Crear el directorio de logs, mediante la instruccion
+7. Crear el directorio de logs, mediante la instruccion
 
 ```
 cd /data/hab_antena
 mkdir logs
 ```
 
-5. Configurar el archivo de configuración.
+8. Configurar el archivo de configuración.
    1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/hav.conf
    2. Los detalles de configuración de cada sensor se pueden consultar en la sección de configuración de cada módulo descritos en la sección [Componentes](#componentes)
 
@@ -106,7 +107,7 @@ Esto se puede hacer utilizando el comando:
 mv -rf /data/hab_antena /data/nombre_nuevo
 ```
 
-6. Configurar y activar los servicios. Ver el punto [Generación de Servicios](#generaci-n-de-servicios)
+9. Configurar y activar los servicios. Ver el punto [Generación de Servicios](#generaci-n-de-servicios)
 
 ## Configuraciones Genericas
 
