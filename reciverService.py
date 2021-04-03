@@ -40,7 +40,9 @@ puertoUSB=serial.Serial(usbRF)
 #print ("key: " + st
 
 #Archivo donde almacenaran los datos recibidos
-LOG_PATH = "/data/hab_antena/logs/recivedData.log"
+#LOG_PATH = "/data/hab_antena/logs/recivedData.log"
+
+LOG_PATH = ConfigHelper.getDataFileName()
 
 recieved = ""
 buffer = ""

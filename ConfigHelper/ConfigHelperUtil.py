@@ -13,7 +13,47 @@ import logging
 
 CONF_PATH = "/data/hab_antena/conf/tracker.conf"
 
-def getAntenaID():
+def getMqttServerHost():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("MQTT", "mqttHost")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "valor vacio"
+
+def getMqttServerPort():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("MQTT", "mqttPort")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "valor vacio"
+
+def getMqttServerUser():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("MQTT", "mqttUser")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "valor vacio"
+
+def getMqttServerPass():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("MQTT", "mqttPass")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "valor vacio"
+
+def getAntennaID():
     try:
         cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
@@ -22,6 +62,16 @@ def getAntenaID():
     except:
         #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
         return "valor vacio"
+
+def getDataFileName():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("TCK", "dataPath")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "defectID"
 
 def getTiempoEntreMov():
     try:
