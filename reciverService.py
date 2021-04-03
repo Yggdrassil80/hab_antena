@@ -1,10 +1,7 @@
 ##################################################################################
-#Proyecto: trackerService					                                     #
+#Proyecto: rerciverService					                                     #
 #Autor: Oscar Loras Delgado				                                         #
-#Descricpión: Servicio de tracker experimental para el seguimiento mendiante una #
-#  antena autoapuntada contra el HAB, implica disoner de GPS integrado y una MPU.#
-#  Además de una plataforma mobil con dos ejes de libertad. De momento los       #
-#  actuadores serian servos convencionales. No motores paso a paso               #
+#Descricpión: Servicio de recepcion de datos de telemetria de hab_sonda          #
 ##################################################################################
 
 import os
@@ -15,7 +12,6 @@ import datetime
 import binascii
 import logging
 
-import GPSHelper
 import ConfigHelper
 
 #Creacion del logger para los logs del servicio
@@ -59,7 +55,6 @@ while True:
             loggerLog.info("[ReciverService][Conf] Generando archivo de datos raw...")
             f = open (LOG_PATH, "a")
             loggerLog.info("[ReciverService][Conf] Escribiendo en archivo de datos raw...")
-            #Si esta activado el modulo GPS se añade la información al final de la traza
             try:
                 f.write(str(buffer.decode()))
             except Exception as eGps:
