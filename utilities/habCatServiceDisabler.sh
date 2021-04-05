@@ -19,4 +19,4 @@ for service in $listaServicios; do
 done
 echo "Todos los servicios desactivados!"
 
-done < /data/hab_sonda/utilities/services.conf
+done < /data/hab_antena/utilities/services.conf

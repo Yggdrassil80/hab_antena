@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/python3 -m habmapslib.cli --conffile /data/hab_antena/conf/mqttClient.yaml
+ExecStart=/data/hab_antena/habMapService.sh
 Restart=always
 RestartSec=0
 

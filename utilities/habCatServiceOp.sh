@@ -10,4 +10,4 @@ for service in $listaServicios; do
 done
 echo "Servicios Gestionados"
 
-done < /data/hab_sonda/utilities/services.conf
+done < /data/hab_antena/utilities/services.conf

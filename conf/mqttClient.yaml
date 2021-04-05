@@ -1,9 +1,9 @@
 basestation:
-  id: "Pardines01"
+  id: "HABANTENA01"
   appenders:
     gpsappender: ""
 mqtt:
-  url: "3.129.211.27"
+  url: "localhost"
   topic: "hablistener"
   port: 1883
   user: "habmaps"
