@@ -1,0 +1,12 @@
+[Unit]
+Description=HABMAP Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 -m habmapslib.cli --conffile /data/hab_antena/conf/mqttClient.yaml
+Restart=always
+RestartSec=0
+
+[Install]
+WantedBy=multi-user.target
