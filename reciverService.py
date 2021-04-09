@@ -33,41 +33,64 @@ puertoUSB=serial.Serial(usbRF)
 #puertoUSB=serial.Serial('COM4', timeout = 5.0)
 #puertoUSB=serial.Serial('COM4')
 
-#Configuración que deberia utilizarse para configurar el chip
-#C1C1C1 deberia devolver      C 0  0 0  0 0  1 A  1 7  4 4
-#                            6330 3030 3030 3161 3137 3434
-#key = ''.join(chr(x) for x in [0xC1, 0xC1, 0xC1])
-#print ("key: " + st
-
 #Archivo donde almacenaran los datos recibidos
-#LOG_PATH = "/data/hab_antena/logs/recivedData.log"
-
 LOG_PATH = ConfigHelper.getDataFileName()
 
 recieved = ""
 buffer = ""
 loggerLog.info("[ReciverService][Conf] Arrancando receptor...: " + puertoUSB.portstr)
 
+
+encontrado = 0
+traza = ""
+newTraza = ""
+trozoFinal = bytearray()
+trozoNoFinal = bytearray()
+
 while True:
     try:
         while (puertoUSB.inWaiting() > 0):
-            loggerLog.info("[ReciverService][Conf] Dato entrante...")
-            buffer = puertoUSB.read(64)
-            loggerLog.info("[ReciverService][Conf] Dato leido: " + str(buffer))
-            loggerLog.info("[ReciverService][Conf] Generando archivo de datos raw...")
-            f = open (LOG_PATH, "a")
-            loggerLog.info("[ReciverService][Conf] Escribiendo en archivo de datos raw...")
-            try:
-                f.write(str(buffer.decode()))
-            except Exception as eGps:
-                #Si hubiera un error, se notifica, pero se intenta guardar datos que hubiera en el buffer igualmente
-                loggerLog.error("[ReciverService][ERROR] Ha habido un problema con la recepción de los datos: " + str(eGps))
-                f.write(str(buffer.decode()))
+            loggerLog.debug("[ReciverService] Dato entrante...")
+            buffer = puertoUSB.read(32)
+            loggerLog.debug("[ReciverService] Dato leido: " + str(buffer))
+            loggerLog.debug("[ReciverService] Generando archivo de datos raw...")
+            for i in range(len(buffer)):
+                 if (buffer[i] == 10):
+                     #salto de carro encontrado, los datos van de i=0 a i.
+                     encontrado = 1
+                     trozoFinal = buffer[0:i+1]
+                     trozoNoFinal = buffer[i+1:len(buffer)] 
+                     loggerLog.debug("[ReciverService] byte leido: " + str(buffer[i]) + " en posicion: " + str(i))
+                     break
 
-            f.close()
-            loggerLog.info("[ReciverService][Conf] Archivo de datos raw cerrado")
+            if (encontrado == 1): 
+                #Existe un trozo final
+                traza+=trozoFinal.decode()
+                newTraza = trozoNoFinal.decode() 
+                f = open (LOG_PATH, "a")
+                loggerLog.debug("[ReciverService] Fragmento final recuperado:" + trozoFinal.decode())
+                loggerLog.debug("[ReciverService] Escribiendo en archivo de datos raw...")
+                loggerLog.info("[ReciverService] traza a escribir: " + str(traza))
+                try:
+                    f.write(traza)
+                except Exception as eGps:
+                    #Si hubiera un error, se notifica, pero se intenta guardar datos que hubiera en el buffer igualmente
+                    loggerLog.error("[ReciverService][ERROR] Ha habido un problema con la recepción de los datos: " + str(eGps))
+                    f.write(traza)
+                f.close()
+                loggerLog.debug("[ReciverService] Archivo de datos raw cerrado")
+                traza = newTraza
+                newTraza = ""
+                encontrado = 0
+                loggerLog.info("[ReciverService] Fragmento inicial de traza: " + traza)
+            else:
+                loggerLog.debug("[ReciverService] Fragmento recuperado:" + trozoNoFinal.decode())
+                traza+=trozoNoFinal.decode()
+                loggerLog.info("[ReciverService] Traza actual: " + traza)
+
+            loggerLog.debug("[ReciverService] traza vale: " + traza + " newTraza vale: " + newTraza)
+
             buffer = ""
-
             puertoUSB.flushInput()
             puertoUSB.flushOutput()
 
