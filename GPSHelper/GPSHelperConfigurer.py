@@ -160,7 +160,7 @@ class UbxStream(object):
         self.dev.write(msg.msg)
         if(self.__confirmation()):
             return msg
-
+			
     # diables all NMEA messages by default using ubx class / ids
     # 0xF0 = 240 / 0xF1 = 241
     # NMEA Messages:
