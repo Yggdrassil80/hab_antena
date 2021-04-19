@@ -172,3 +172,4 @@ def getUsbGPS():
     except:
         #loggerLog.error("[ConfigHelper][getUsbGPS] ERROR");
         return "Puerto Vacio"
+

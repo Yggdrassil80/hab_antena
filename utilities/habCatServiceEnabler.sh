@@ -6,7 +6,7 @@ while read listaServicios; do
 
 echo "Copiando archivo de servicios..."
 for service in $listaServicios; do
-    sudo cp /data/hab_antena/services/$service.service /etc/systemd/system/$service.service
+    sudo cp /data/hab_antena/service/$service.service /etc/systemd/system/$service.service
 done
 echo "Archivos copiados OK!"
 echo "Reload del daemon de systemctl.."
