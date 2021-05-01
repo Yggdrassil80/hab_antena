@@ -10,7 +10,7 @@
   * [Descripción Componentes](#descripci-n-componentes)
     + [GPS](#gps)
     + [RF](#rf)
-    + [Proceso Principal](#proceso-principal)
+    + [Proceso HabMap](#proceso-HabMap)
     + [Servicio de Configuración](#servicio-de-configuraci-n)
   * [Hardware](#hardware)
     + [Diagrama del Hardware](#diagrama-del-hardware)
@@ -88,9 +88,10 @@ cd /data/hab_antena
 mkdir logs
 ```
 
-8. Configurar el archivo de configuración.
-   1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/hav.conf
+8. Configurar los archivos de configuración.
+   1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/tracker.conf
    2. Los detalles de configuración de cada sensor se pueden consultar en la sección de configuración de cada módulo descritos en la sección [Componentes](#componentes)
+   3. Lo siguiente será configurar el archivo mqttClient.yaml. Los detalles de este archivo se encuentran en la sección
 
 * NOTA *: Llegado es punto, si se deseara, se puede cambiar el nombre "hab_antena" por el nombre que se desee. Esto se puede hacer utilizando los comandos siguiente:
 
@@ -236,23 +237,19 @@ donde,
 
 Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad de disponer, en la misma traza recibida, de las coordenadas GPS + altura del HAB y de la antena a la vez, con lo que, eventualmente, se podría calcular la distancia real exacta entre antena y HAB.
 
-### RF
+### Servicio de Recepcion
 
 #### Introducción
 
-El modulo de RF que se utilizará para la recepción es uno simetrico al uso en el HAB, es un ebyte E32-TTL-100 que esta basado en la tecnologia LoRa (Long Range) del chip SX1278 de Semtech.
-
-Esta tecnología permite el envio/recepción de mensajes con muy poca energia a grandes distancias a coste eso si de un ancho de banda muy bajo.
-
-Se utiliza para la recepción de datos tomados por los sensores de la sonda exceptuando las imagenes o videos de la cámara embarcada, ya que el ancho de banda no lo permite.
+En este caso, el módulo de recepción se denomina reciverService y es el encargado de permanecer escuchando las trazas entrantes del HAB.
 
 #### Descripción
 
-El módulo seleccionado de ebyte viene ya preconfigurado. Se conecta a la raspberry a través del puerto serie y, mediante un adaptador CP2102, a un slot USB.
+Este servicio basa su funcionamiento en un chip de RF Ebyte-E32-TTL-100 que viene ya preconfigurado de fabrica. Se conecta a la raspberry a través del puerto serie y, mediante un adaptador CP2102, a un slot USB.
 
 Dispone además de dos pines de configuración, M0 y M1 que, para que pueda funcionar en modo recepción y emisión han de estar a 0V (ojo, no en Z).Osea, conectados al GND de la PI.
 
-Para poder configurar los parametros internos del chip M0 y M1 han de configurarse ambos a 1 lógico (3.3 o 5 V).
+Para poder configurar los parametros internos del chip M0 y M1 han de configurarse ambos a 1 lógico (3.3V).
 
 Toda la configuración los parametros de LoRa del chip se basa en el parametro de airrate que viene a ser el ancho de banda con el que transmite el chip.
 
@@ -273,44 +270,107 @@ Los siguientes parámetros de configuración de LoRa son los que corresponden a 
 
 La frecuencia central se encuentra en los 433 Mhz.
 
-No se tiene información sobre que sync_word o que longitud de preambulo se esta usando.
-
-El airRate por defecto es de 2.4 Kbps.
+El airRate por defecto es de 2.4 Kbps. Es decir, la velocidad de transferencia del chip.
 
 El modulo de software desarrollado para este chip aisla todos estos elementos de configuración del desarrollador. 
 
-Se ha de dejado un único método al cual se le pasa una cadena de texto (que representa, por ejemplo una linea del sensores.log) y la envia sin mas.
+Un aspecto interesante de este módulo es que genera dos archivos, cuyo nombre es configurable, pero inicialmente estan denominados como recivedData.log y recivedDataRaw.log. El primero es un archivo procesado donde se garantiza que las trazas recibidas se escriben de linea en linea (incluyendo el salto de carro) de forma que el servicio de mapas pueda procesar linea a linea el archivo de forma mas eficiente.
+
+El segundo archivo es el recivedDataRaw.log. Este archivo corresponde a la información en Raw que llega directamente desde la antena. Se almacena asi por seguridad, para evitar que un posible error en el procesado de datos para la libreria de mapas pueda hacer perder algún dato.
 
 #### Configuración
 
-Existe configuración estática para este modulo en el archivo de configuración conf/hav.conf
+Existe configuración estática para este modulo en el archivo de configuración conf/tracker.conf, dentro del tag [RF] y dentro del tag [TCK]
 
+En RF:
+```
 usbRF=/dev/ttyUSB2
-
+```
 donde,
 
 - usbRF: corresponde al puerto USB al que esta conectado el adaptador cp2102 del componente de RF (Lora ebyte). Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
 
 <b> IMPORTANTE: </b> Para que exista comunicación entre dos componentes de este tipo, ambos han de estar configurados en la misma frequencia y canal.
 
-### Proceso Principal
+En TCK:
+```
+dataPath=/data/hab_antena/logs/recivedData.log
+dataPathRaw=/data/hab_antena/logs/recivedDataRaw.log
+```
+
+donde,
+- dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas
+- dataPathRaw: que corresponde al archivo de datos recibidos en raw por parte de la antena.
+
+### Proceso HabMap
 
 #### Introducción
 
-En este caso, el módulo de recepción se denomina reciverService y es el encargado de permanecer escuchando las trazas entrantes del HAB
+Este módulo de software es el encargado de coger los datos recibidos por la antena y llevarlos a una cola mqtt en la nube (o donde se desee). En el proceso enriquecerá los datos recibidos con un identificador de antena y la posición GPS de la misma, si este servicio estuviera configurado. 
 
 #### Descripción
 
-En esencia se trata de un proceso basado en el chip de RF explicado en el módulo de RF de esta documentación que espera recibir, por el puerto serie de la Pi donde este conectado (a través de un CP2102) los bytes de una traza enviada por el HAB. Dicha información se escribe en un buffer que posteriormente se escribe directamente a un archivo de texto en el local de la pi que se este utilizando.
+Este componente basa su funcionamiento en una libreria desarrollada para tal efecto que es preciso instalar.
 
-En una misión tipo, es posible que hayan mas de una antena escuhando al HAB, y estas antenas además pueden ser móviles (montadas en vehiculos). Por ese motivo este módulo de software realiza dos tareas adicionales sobre los datos recibidos antes de escribirlos en el archivo de salida.
+<b>NOTA: </b> Para mas información sobre detalles de funcionamiento, instalación y configuración de esta libreria se pueden encontrar aquí: https://pypi.org/project/habmapslib/ 
 
-- Lo primero es añadirle un identificador de antena, que no es mas que una cadena de texto adicional que se identifica de forma únequivoca la antena que ha recibido el dato. Esto es capital, ya que cuando esta información sea llevada a la nube, se mezclará con los datos del resto de antenas, y puede ser necesario tener que identificar que antena recibio que, para acabar de componer todo el vuelo del HAB y así ayudar a eliminar información duplicada.
-- Lo segundo es añadirle, si así se ha configurado, las coordenadas GPS + altura de la propia antena que recibió los datos. Saber donde estaba la antena cuando recibió los datos es crítico para posteriormente, calcular el alcance de la emisión original e incluso ayudar a los vehiculos con antenas a dirigirse hacia lugares donde puedan maximizar la recepción
+La instalación de la libreria se efectúa mediante la siguiente instrucción:
+
+```
+sudo pip3 install habmapslib
+```
+
+La libreria esta pensada para poder ser arrancada como un servicio mas de raspbian. El ejecutable que gobierna su servicio de arranque es el archivo /data/hab_antena/habMapService.sh.
+
+El servicio que arranca la libreria tiene un archivo .service en /data/hab_antena/services que es instalable a partir de lo explicado en los puntos superiores de este documento o bien utilizando las tools disponinbles en el directorios de /utilities.
 
 #### Configuración
 
-TODO
+La configuración de este componente se realiza  través de un archivo de configuración adicional, denominado por defecto mqttClient.yaml que tiene el contenido por defecto siguiente:
+
+```
+basestation:
+  id: "HABANTENA01"
+  appenders:
+    gpsappender:
+      file: '/data/hab_antena/logs/gpsdata.log'
+      regexselect: '\[.*\]\|(.*)\|(.*),(.*)\|.*\|'
+      mapping:
+        - "height"
+        - "lat"
+        - "lon"
+mqtt:
+  url: "localhost"
+  topic: "hablistener"
+  port: 1883
+  user: "habmaps"
+  password: "root"
+  alive: 60
+frame:
+  # Definición de la trama donde
+  # $time : Es la hora expresada en HHMMSS
+  # $pos : Es la posición gps del hab expresada en lat,lon
+  # $id  : Es el identificador del hab
+  format: "$time|AlturaGPS|$pos|VelocidadHorizontalGPS|Temperatura|Presion|AlturaBarometrica|$id|"
+  # Fichero donde se van insertando las trazas de LoRa
+  file: "/data/hab_antena/logs/recivedData.log"
+  # Cada cuantos segundos se mira el fichero de envio
+  refresh: 1
+```
+
+La configuración de este archivo difiere de la configuración tradicional que se puede observar en el tracker.conf, donde la configuración es de tipo clave=valor.
+
+Aqui se ha desarrollado vía yaml, que es un estandar de representación de archivos similar al xml.
+
+Los campos a configurar son:
+- basestation.id: identificador de la antena. Es una etiqueta que identificará, para cada traza recibida, que antena la ha recivido.
+- basestation.appender.: Contiene la información necesaria para procesar la información del servicio de GPS que pudiera estar configurado en la antena. <b>No es preciso alterar esta configuración<b>
+- mqtt.utl: Su valor por defecto es localhost, pero en funcionamiento real corresponderá a la url del servidor remoto donde se encuentre la cola mqtt que almacenará los datos que se le envien desde la antena. <b> Este valor será proporcionado el dia del lanzamiento a los responsables de su configuración <b>
+- mqtt.topic: Los servidores mqtt disponen de colas o topics donde se pueden escribir los datos y leerlos posteriormente. En el caso particular de la libreria que se ha creado, tiene el valor "hablistener" y <b>no es preciso alterarlo</b>
+- mqtt.port: Valor por defecto del puerto donde se encuentre levantado el servidor mqtt en la nube. Su valor es "1883" y <b>no es preciso alterarlo</b>
+- mqtt.user: Para securizar la solución de la cola mqtt y evitar que nadie mas que las antenas publiquen datos en el, se ha creado un usuario y un password para proteger la ingesta de datos. Su valor por defecto es "habmaps" pero <b>se proporcionará uno específico para el dia del lanzamiento</b>
+- mqtt.password: Valor por defecto "root". Corresponde al password del usuario anterior.
+- mqtt.alive: Valor por defecto "60". <b>No es necesario manipular".
 
 ### Servicio de Configuración
 
