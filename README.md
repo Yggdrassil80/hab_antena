@@ -29,7 +29,7 @@ En este proyecto se describirán los principales componentes de la antena recept
 
 ## Diagrama de sistemas
 
-TODO
+![diagrama_sistemas_antena](doc/img/diagrama_sistemas_antena.png)
 
 ## Getting Started
 
