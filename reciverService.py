@@ -35,6 +35,7 @@ puertoUSB=serial.Serial(usbRF)
 
 #Archivo donde almacenaran los datos recibidos
 LOG_PATH = ConfigHelper.getDataFileName()
+LOG_PATH_RAW = ConfigHelper.getDataFileNameRaw()
 
 recieved = ""
 buffer = ""
@@ -51,9 +52,14 @@ while True:
     try:
         while (puertoUSB.inWaiting() > 0):
             loggerLog.debug("[ReciverService] Dato entrante...")
-            buffer = puertoUSB.read(32)
+            buffer = puertoUSB.read(64)
             loggerLog.debug("[ReciverService] Dato leido: " + str(buffer))
             loggerLog.debug("[ReciverService] Generando archivo de datos raw...")
+            fraw = open (LOG_PATH_RAW, "a")
+            fraw.write(buffer.decode())
+            fraw.close()
+            loggerLog.debug("[ReciverService] Archivo de datos en raw cerrado")
+            loggerLog.debug("[ReciverService] Generando archivo de datos para mqtt...")
             for i in range(len(buffer)):
                  if (buffer[i] == 10):
                      #salto de carro encontrado, los datos van de i=0 a i.
@@ -69,7 +75,7 @@ while True:
                 newTraza = trozoNoFinal.decode() 
                 f = open (LOG_PATH, "a")
                 loggerLog.debug("[ReciverService] Fragmento final recuperado:" + trozoFinal.decode())
-                loggerLog.debug("[ReciverService] Escribiendo en archivo de datos raw...")
+                loggerLog.debug("[ReciverService] Escribiendo en archivo de datos para mqtt...")
                 loggerLog.info("[ReciverService] traza a escribir: " + str(traza))
                 try:
                     f.write(traza)
@@ -78,7 +84,7 @@ while True:
                     loggerLog.error("[ReciverService][ERROR] Ha habido un problema con la recepción de los datos: " + str(eGps))
                     f.write(traza)
                 f.close()
-                loggerLog.debug("[ReciverService] Archivo de datos raw cerrado")
+                loggerLog.debug("[ReciverService] Archivo de datos cerrado")
                 traza = newTraza
                 newTraza = ""
                 encontrado = 0

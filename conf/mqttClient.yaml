@@ -22,7 +22,7 @@ frame:
   # $id  : Es el identificador del hab
   format: "$time|AlturaGPS|$pos|VelocidadHorizontalGPS|Temperatura|Presion|AlturaBarometrica|$id|"
   # Fichero donde se van insertando las trazas de LoRa
-  file: "/Users/alvaroperis/ArchLab/habmapsgateway/demotraces/out.log"
+  file: "/data/hab_antena/logs/recivedData.log"
   # Cada cuantos segundos se mira el fichero de envio
   refresh: 1
 

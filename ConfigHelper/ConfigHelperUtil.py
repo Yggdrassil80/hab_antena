@@ -67,6 +67,17 @@ def getDataFileName():
     try:
         cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
+        t = cfg.get("TCK", "dataPathRaw")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
+        return "defectID"
+
+
+def getDataFileName():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
         t = cfg.get("TCK", "dataPath")
         return str(t)
     except:
