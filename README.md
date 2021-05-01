@@ -407,7 +407,7 @@ Tomando como referencia una traza tipo que pudiera llegar a la antena;
 
 <b>110345|1234|42.453,2.3232|0.4|</b>15.7|1000.1|1123|HABCAT2|
 
-Los valores en <b>negrita</b> corresponden a la configuración del GPS que <b>no se ha de manipular<b>.
+Los valores en <b>negrita</b> corresponden a la configuración del GPS que <b>no se ha de manipular</b>.
  
 Si la traza enviada por la sonda fuera otra, por ejemplo:
 
@@ -424,7 +424,7 @@ Como se puede observar, los datos de GPS siguen siendo los mismos y el $id igual
 - <b>frame.file</b>: Este valor corresponde al archivo de datos procesado para que sus entradas aparezcan de una linea en una linea. Por defecto: "/data/hab_antena/logs/recivedData.log"
  - <b>frame.refresh</b>: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
 
-<b>IMPORTANTE</b>: Para probar de forma local el envio de datos a la cola mqtt, se puede hacer una instalación local de una y configurar el mqttClient.yaml para que los datos se inyecten alli. El procedimiento de test esta descrito en este (anexo)[MQTTLocal]
+<b>IMPORTANTE</b>: Para probar de forma local el envio de datos a la cola mqtt, se puede hacer una instalación local de una y configurar el mqttClient.yaml para que los datos se inyecten alli. El procedimiento de test esta descrito en este [anexo](#MQTTLocal)
 
 ### Servicio de Configuracion
 
