@@ -376,15 +376,15 @@ La configuración de este archivo difiere de la configuración tradicional que s
 Aqui se ha desarrollado vía yaml, que es un estandar de representación de archivos similar al xml.
 
 Los campos a configurar son:
-- basestation.id: identificador de la antena. Es una etiqueta que identificará, para cada traza recibida, que antena la ha recivido.
-- basestation.appender.: Contiene la información necesaria para procesar la información del servicio de GPS que pudiera estar configurado en la antena. <b>No es preciso alterar esta configuración<b>
-- mqtt.utl: Su valor por defecto es localhost, pero en funcionamiento real corresponderá a la url del servidor remoto donde se encuentre la cola mqtt que almacenará los datos que se le envien desde la antena. <b> Este valor será proporcionado el dia del lanzamiento a los responsables de su configuración <b>
-- mqtt.topic: Los servidores mqtt disponen de colas o topics donde se pueden escribir los datos y leerlos posteriormente. En el caso particular de la libreria que se ha creado, tiene el valor "hablistener" y <b>no es preciso alterarlo</b>
-- mqtt.port: Valor por defecto del puerto donde se encuentre levantado el servidor mqtt en la nube. Su valor es "1883" y <b>no es preciso alterarlo</b>
-- mqtt.user: Para securizar la solución de la cola mqtt y evitar que nadie mas que las antenas publiquen datos en el, se ha creado un usuario y un password para proteger la ingesta de datos. Su valor por defecto es "habmaps" pero <b>se proporcionará uno específico para el dia del lanzamiento</b>
-- mqtt.password: Valor por defecto "root". Corresponde al password del usuario anterior.
-- mqtt.alive: Valor por defecto "60". <b>No es necesario manipular".
-- frame.format: Este campo permite la configuración de los datos que se van a enviar a la cola mqtt para que estos puedan ser debidamente interpretados posteriormente por los componentes que generaran los mapas interactivos y los cuadros mandos. Lo que permite configurar este parámetro es el nombre de los datos que se enviaran, estos, además, <b>han de estar en el orden en el que serán recividos por la antena</b>. Adicionalmente, hay algunos de estos datos que siempre serán fijos y con el mismo nombre, de forma que exista una parte <b>variable y configurable por el usuario<b>.
+- <b>basestation.id</b>: identificador de la antena. Es una etiqueta que identificará, para cada traza recibida, que antena la ha recivido.
+- <b>basestation.appender.</b>: Contiene la información necesaria para procesar la información del servicio de GPS que pudiera estar configurado en la antena. <b>No es preciso alterar esta configuración</b>
+- <b>mqtt.utl</b>: Su valor por defecto es localhost, pero en funcionamiento real corresponderá a la url del servidor remoto donde se encuentre la cola mqtt que almacenará los datos que se le envien desde la antena. <b> Este valor será proporcionado el dia del lanzamiento a los responsables de su configuración <b>
+- <b>mqtt.topic</b>: Los servidores mqtt disponen de colas o topics donde se pueden escribir los datos y leerlos posteriormente. En el caso particular de la libreria que se ha creado, tiene el valor "hablistener" y <b>no es preciso alterarlo</b>
+- <b>mqtt.port</b>: Valor por defecto del puerto donde se encuentre levantado el servidor mqtt en la nube. Su valor es "1883" y <b>no es preciso alterarlo</b>
+- <b>mqtt.user</b>: Para securizar la solución de la cola mqtt y evitar que nadie mas que las antenas publiquen datos en el, se ha creado un usuario y un password para proteger la ingesta de datos. Su valor por defecto es "habmaps" pero <b>se proporcionará uno específico para el dia del lanzamiento</b>
+- <b>mqtt.password</b>: Valor por defecto "root". Corresponde al password del usuario anterior.
+- <b>mqtt.alive</b>: Valor por defecto "60". <b>No es necesario manipular".
+- <b>frame.format</b>: Este campo permite la configuración de los datos que se van a enviar a la cola mqtt para que estos puedan ser debidamente interpretados posteriormente por los componentes que generaran los mapas interactivos y los cuadros mandos. Lo que permite configurar este parámetro es el nombre de los datos que se enviaran, estos, además, <b>han de estar en el orden en el que serán recividos por la antena</b>. Adicionalmente, hay algunos de estos datos que siempre serán fijos y con el mismo nombre, de forma que exista una parte <b>variable y configurable por el usuario<b>.
 
 Sobre la configuración de ejemplo:
 ```
@@ -421,8 +421,8 @@ La configuración del parámetro "frame.format", podría ser:
 
 Como se puede observar, los datos de GPS siguen siendo los mismos y el $id igual, en ultima posición, pero habrían aparecido 2 campos mas, que representan (en el caso de este ejemplo) una temperatura y un indice de rayos UV tomado por el sensor VEML6070.
 
-- frame.file: Este valor corresponde al archivo de datos procesado para que sus entradas aparezcan de una linea en una linea. Por defecto: "/data/hab_antena/logs/recivedData.log"
-- frame.refresh: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
+- <b>frame.file</b>: Este valor corresponde al archivo de datos procesado para que sus entradas aparezcan de una linea en una linea. Por defecto: "/data/hab_antena/logs/recivedData.log"
+ - <b>frame.refresh</b>: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
 
 ### Servicio de Configuracion
 
