@@ -63,7 +63,7 @@ def getAntennaID():
         #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
         return "valor vacio"
 
-def getDataFileName():
+def getDataFileNameRaw():
     try:
         cfg = configparser.ConfigParser()
         cfg.read([CONF_PATH])
