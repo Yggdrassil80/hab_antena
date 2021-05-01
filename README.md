@@ -9,9 +9,22 @@
   * [Logging](#logging)
   * [Descripción Componentes](#descripci-n-componentes)
     + [GPS](#gps)
-    + [RF](#rf)
-    + [Proceso HabMap](#proceso-HabMap)
-    + [Servicio de Configuración](#servicio-de-configuraci-n)
+      - [Introducción](#introducci-n-1)
+      - [Descripción](#descripci-n)
+      - [Conexión](#conexi-n)
+      - [Calibrado](#calibrado)
+      - [Configuración](#configuraci-n)
+    + [Servicio de Recepcion](#servicio-de-recepcion)
+      - [Introducción](#introducci-n-2)
+      - [Descripción](#descripci-n-1)
+      - [Configuración](#configuraci-n-1)
+    + [Proceso HabMap](#proceso-habmap)
+      - [Introducción](#introducci-n-3)
+      - [Descripción](#descripci-n-2)
+      - [Configuración](#configuraci-n-2)
+    + [Servicio de Configuracion](#servicio-de-configuracion)
+      - [Introducción](#introducci-n-4)
+      - [Descripción](#descripci-n-3)
   * [Hardware](#hardware)
     + [Diagrama del Hardware](#diagrama-del-hardware)
     + [Bus I2C](#bus-i2c)
@@ -371,8 +384,47 @@ Los campos a configurar son:
 - mqtt.user: Para securizar la solución de la cola mqtt y evitar que nadie mas que las antenas publiquen datos en el, se ha creado un usuario y un password para proteger la ingesta de datos. Su valor por defecto es "habmaps" pero <b>se proporcionará uno específico para el dia del lanzamiento</b>
 - mqtt.password: Valor por defecto "root". Corresponde al password del usuario anterior.
 - mqtt.alive: Valor por defecto "60". <b>No es necesario manipular".
+- frame.format: Este campo permite la configuración de los datos que se van a enviar a la cola mqtt para que estos puedan ser debidamente interpretados posteriormente por los componentes que generaran los mapas interactivos y los cuadros mandos. Lo que permite configurar este parámetro es el nombre de los datos que se enviaran, estos, además, <b>han de estar en el orden en el que serán recividos por la antena</b>. Adicionalmente, hay algunos de estos datos que siempre serán fijos y con el mismo nombre, de forma que exista una parte <b>variable y configurable por el usuario<b>.
 
-### Servicio de Configuración
+Sobre la configuración de ejemplo:
+```
+"$time|AlturaGPS|$pos|VelocidadHorizontalGPS|Temperatura|Presion|AlturaBarometrica|$id|"
+```
+Los siguientes datos serán fijos, tanto en nombre, como en posición:
+```
+$time|AlturaGPS|$pos|VelocidadHorizontalGPS|
+```
+y el último valor, 
+```
+$id|
+```
+
+Los 4 primeros valores corresponden a la hora y coordenadas de la traza (las que envia el HAB). El último valor, $id, corresponde al identificador de la antena.
+
+Los valores "Temperatura|Presion|AlturaBarometrica" son los que en este ejemplo, serian escogibles por el usuario para los datos que envie.
+
+Tomando como referencia una traza tipo que pudiera llegar a la antena;
+
+<b>110345|1234|42.453,2.3232|0.4|</b>15.7|1000.1|1123|HABCAT2|
+
+Los valores en <b>negrita</b> corresponden a la configuración del GPS que <b>no se ha de manipular<b>.
+ 
+Si la traza enviada por la sonda fuera otra, por ejemplo:
+
+<b>110345|1234|42.453,2.3232|0.4|</b>15.7|1000.1|1123|3.2|0.4|HABCAT2|
+
+La configuración del parámetro "frame.format", podría ser:
+
+```
+"$time|AlturaGPS|$pos|VelocidadHorizontalGPS|Temperatura|Presion|AlturaBarometrica|temperaturaExterna|indiceUV|$id|"
+```
+
+Como se puede observar, los datos de GPS siguen siendo los mismos y el $id igual, en ultima posición, pero habrían aparecido 2 campos mas, que representan (en el caso de este ejemplo) una temperatura y un indice de rayos UV tomado por el sensor VEML6070.
+
+- frame.file: Este valor corresponde al archivo de datos procesado para que sus entradas aparezcan de una linea en una linea. Por defecto: "/data/hab_antena/logs/recivedData.log"
+- frame.refresh: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
+
+### Servicio de Configuracion
 
 #### Introducción
 
