@@ -20,7 +20,7 @@ frame:
   # $time : Es la hora expresada en HHMMSS
   # $pos : Es la posición gps del hab expresada en lat,lon
   # $id  : Es el identificador del hab
-  format: "$time|AlturaGPS|$pos|VelocidadHorizontalGPS|Temperatura|Presion|AlturaBarometrica|$id|"
+  format: "$time|AlturaGPS|$pos|VelocidadHorizontalGPS|TempBMP|Presion|AlturaBarometrica|radiacio|ax|ay|az|gx|gy|gz|ox|oy|oz|TempMPU|TempDallas|$id|"
   # Fichero donde se van insertando las trazas de LoRa
   file: "/data/hab_antena/logs/recivedData.log"
   # Cada cuantos segundos se mira el fichero de envio
