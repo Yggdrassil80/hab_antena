@@ -52,7 +52,7 @@ while True:
     try:
         while (puertoUSB.inWaiting() > 0):
             loggerLog.debug("[ReciverService] Dato entrante...")
-            buffer = puertoUSB.read(64)
+            buffer = puertoUSB.read(128)
             loggerLog.debug("[ReciverService] Dato leido: " + str(buffer))
             loggerLog.debug("[ReciverService] Generando archivo de datos raw...")
             fraw = open (LOG_PATH_RAW, "a")
