@@ -90,6 +90,7 @@ while True:
                 encontrado = 0
                 loggerLog.info("[ReciverService] Fragmento inicial de traza: " + traza)
             else:
+                trozoNoFinal = buffer[0:len(buffer)]
                 loggerLog.debug("[ReciverService] Fragmento recuperado:" + trozoNoFinal.decode())
                 traza+=trozoNoFinal.decode()
                 loggerLog.info("[ReciverService] Traza actual: " + traza)
