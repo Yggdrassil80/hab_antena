@@ -9,7 +9,7 @@ basestation:
         - "lat"
         - "lon"
 mqtt:
-  url: "ec2-18-219-170-244.us-east-2.compute.amazonaws.com"
+  url: "ec2-18-188-19-91.us-east-2.compute.amazonaws.com"
   topic: "hablistener"
   port: 1883
   user: "habmaps"
