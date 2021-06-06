@@ -25,4 +25,9 @@ frame:
   file: "/data/hab_antena/logs/recivedData.log"
   # Cada cuantos segundos se mira el fichero de envio
   refresh: 1
-
+  # Filtro de hab. Listado de expresiones regulares de identificadores $id de hab que se
+  # contemplarán. Cualquier identificador que no cumpla una de estas regex no será 
+  # considerado
+  habidfilter:
+    #- .*   #Cualquier id de hab es válido
+    - HABCAT.*
