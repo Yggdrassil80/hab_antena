@@ -1,3 +1,5 @@
+#Class and documentation extracted from https://github.com/Korving-F/ublox
+
 import struct
 import sys
 import time
