@@ -1,6 +1,6 @@
 ##################################################################################
 #Proyecto: trackerService					                                     #
-#Autor: Oscar Loras Delgado				                                         #
+#Autor: Yggdrassil80			                                         #
 #Descricpión: Servicio de tracker experimental para el seguimiento mendiante una #
 #  antena autoapuntada contra el HAB, implica disoner de GPS integrado y una MPU.#
 #  Además de una plataforma mobil con dos ejes de libertad. De momento los       #
