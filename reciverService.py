@@ -1,6 +1,6 @@
 ##################################################################################
 #Proyecto: rerciverService					                                     #
-#Autor: Oscar Loras Delgado				                                         #
+#Autor: Yggdrassil80				                                         #
 #Descricpión: Servicio de recepcion de datos de telemetria de hab_sonda          #
 ##################################################################################
 

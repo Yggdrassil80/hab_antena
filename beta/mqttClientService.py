@@ -1,6 +1,6 @@
 ##################################################################################
 #Proyecto: mqtt client Service					                 #
-#Autor: Oscar Loras Delgado				                         #
+#Autor: Yggdrassil80			                         #
 #Descricpion: Servicio para el envio de datos recividos a una cola mqtt remota   #
 ##################################################################################
 
