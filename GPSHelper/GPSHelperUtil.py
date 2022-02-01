@@ -35,7 +35,7 @@ def getGPSDataFromFile():
     gpsData = [int(0), float(0), float(0), "", "", float(0), "KO"]
     try:
         loggerLog.debug("[GPSHelper][getGPSDataFromFile] Recuperando datos del servicio de GPS...")
-        with open('/data/chuteless/logs/gpsdata.log') as gpsdatafile:
+        with open('/data/hab_antena/logs/gpsdata.log') as gpsdatafile:
             line = list(gpsdatafile)[-1]
         loggerLog.debug("[GPSHelper][getGPSDataFromFile] ultima linea: " + line)
         gdata = line.split('|')
