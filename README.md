@@ -221,35 +221,33 @@ La frecuencia central se encuentra en los 433 Mhz. Si se desea cambiar la frecue
 
 El airRate por defecto es de 2.4 Kbps. Es decir, la velocidad de transferencia del chip.
 
-El modulo de software desarrollado para este chip aisla todos estos elementos de configuración del desarrollador. 
+El servicio de software desarrollado para este chip aisla todos estos elementos de configuración del desarrollador. 
 
-Un aspecto interesante de este módulo es que genera dos archivos, cuyo nombre es configurable, pero inicialmente estan denominados como recivedData.log y recivedDataRaw.log. El primero es un archivo procesado donde se garantiza que las trazas recibidas se escriben de linea en linea (incluyendo el salto de carro) de forma que el servicio de mapas pueda procesar linea a linea el archivo de forma mas eficiente.
-
-El segundo archivo es el recivedDataRaw.log. Este archivo corresponde a la información en Raw que llega directamente desde la antena. Se almacena asi por seguridad, para evitar que un posible error en el procesado de datos para la libreria de mapas pueda hacer perder algún dato.
+Un aspecto interesante de este servicio es que genera dos archivos, cuyo nombre es configurable, pero inicialmente estan denominados como ```recivedData.log``` y ```recivedDataRaw.log```:
+* El primero es un archivo procesado donde se garantiza que las trazas recibidas se escriben de línea en línea (incluyendo el salto de carro), de forma que el servicio de mapas pueda procesar línea a línea el archivo de forma mas eficiente.
+* El segundo archivo es el ```recivedDataRaw.log```. Este archivo corresponde a la información en bruto que llega directamente desde la antena. Se almacena así por seguridad, para evitar que un posible error en el procesado de datos para la librería de mapas pueda hacer perder algún dato recibido.
 
 #### Configuración
 
-Existe configuración estática para este modulo en el archivo de configuración conf/tracker.conf, dentro del tag [RF] y dentro del tag [TCK]
+Existe configuración estática para este servicio en el archivo de configuración ```conf/tracker.conf```, dentro de los tags [RF] y [TCK]
 
-En RF:
-```
-usbRF=/dev/ttyUSB2
-```
+En en tag [RF] se configuran las siguientes propiedades:
+  ```
+  usbRF=/dev/ttyUSB2
+  ```
 donde,
 
-- usbRF: corresponde al puerto USB al que esta conectado el adaptador cp2102 del componente de RF (Lora ebyte). Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
+- usbRF: corresponde al puerto USB al que está conectado el adaptador CP2102 del componente de RF (Ebyte LoRa). Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la Raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
 
-<b> IMPORTANTE: </b> Para que exista comunicación entre dos componentes de este tipo, ambos han de estar configurados en la misma frequencia y canal.
-
-En TCK:
+En en tag [TCK] se configuran las siguientes propiedades:
 ```
 dataPath=/data/hab_antena/logs/recivedData.log
 dataPathRaw=/data/hab_antena/logs/recivedDataRaw.log
 ```
 
 donde,
-- dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas
-- dataPathRaw: que corresponde al archivo de datos recibidos en raw por parte de la antena.
+- dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas.
+- dataPathRaw: que corresponde al archivo de datos en bruto recibidos por parte de la antena.
 
 ### GPS
 
