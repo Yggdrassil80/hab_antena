@@ -105,7 +105,7 @@ Los pasos son:
 
 8. Configurar los archivos de configuración.
    1. Configurar los sensores de la antena (LoRa RF y GPS). Para realizar esta acción se ha de configurar el archivo ```/data/hab_antena/conf/tracker.conf```. Los detalles de configuración de cada sensor se pueden consultar en la sección de configuración de cada módulo descritos en la sección [Componentes/LoRa RF](#servicio-de-recepción-lora-rf) y [Componentes/GPS](#gps).
-   2. Configurar el archivo ```mqttClient.yaml```, que utilizará proceso principal para hacer el envío de los datos a un sistema externo para hacer su seguimiento en tiempo real. Los detalles de este archivo se encuentran en la sección [Proceso HabMap](#proceso-habmap).
+   2. Configurar el envío de datos a un sistema externo (cola MQTT) para su seguimiento en tiempo real. Para realizar esta acción se ha de configurar el archivo ```mqttClient.yaml```. Los detalles de este archivo se encuentran en la sección [Proceso HabMap](#proceso-habmap).
 
 9. Configurar y activar los servicios. Ver el punto [Generación de Servicios](#generación-de-servicios)
 
@@ -113,13 +113,13 @@ Los pasos son:
 
 ### Generación de Servicios
 
-Como se ha indicado, la idea es que cada componente nuevo que se agrege, se conciba como un servicio que se ejecute en el arranque de la pi en un orden preestablecido y con las dependencias que se desee.
+Como se ha indicado, la idea es que cada componente nuevo que se agrege se conciba como un servicio independiente que se ejecute en el arranque de la Raspberry Pi en un orden preestablecido y con las dependencias que se desee.
 
-En el código descargado de git ya se dispone de los diferentes archivos .service preparados para ser arrancados localmente. Es importante que se arranques los servicios de este modo, ya que esto asegura que al encender la pi o tras su reinicio, estos servicios se activen <b>automáticamente</b>.
+En el código descargado de Github ya se dispone de los diferentes archivos ```.service``` preparados para ser arrancados localmente. Es importante que se arranquen los servicios de este modo, ya que esto asegura que al encender la Pi, o tras su reinicio, estos servicios se activen <b>automáticamente</b>.
 
 Para poder arrancar el servicio de un componente:
 
-1. Se debe disponer del archivo [Nombre_modulo.service] donde se ha de describir, genericamente, lo siguiente:
+1. Se debe disponer del archivo [Nombre_modulo.service] donde se ha de describir, genéricamente, lo siguiente:
 
 ```
 [Unit]
@@ -164,15 +164,13 @@ Los componentes que necesita la antena no requieren configuración del bus I2C.
 
 ### Configuración USBs
 
-Todos los puertos usbs, una vez conectados, están disponibles, como si fueran un archivo, en la raspberry en el directorio /dev.
-
-Normalmente, vienen descritos como
+Todos los puertos USB, una vez conectados, están disponibles como si fueran un archivo de la Raspberry en el directorio ```/dev```. Normalmente vienen descritos como:
 
 - ttyUSB0
 - ttyUSB1
 ...
 
-Para poder configurarlos en el archivo de configuración, para configurar el RF o el GPS, deberá situarse en la variable correspondiente el path absoluto de estos archivos.
+Para poder configurarlos en el archivo de configuración, p.e. para configurar el RF o el GPS, deberá configurarse en la variable correspondiente el path absoluto de estos archivos:
 
 - /dev/ttyUSB0
 - /dev/ttyUSB1
@@ -188,19 +186,23 @@ TODO
 
 #### Introducción
 
-En este caso, el módulo de recepción se denomina reciverService y es el encargado de permanecer escuchando las trazas entrantes del HAB.
+El módulo de recepción de datos de la antena utilizará el mismo conponente utilizado para la transmisión de datos en la sonda: un Eyte E32-TTL-100 que está basado en la tecnología LoRa (Long Range) del chip SX1278 de Semtech.
+
+Para que exista comunicación entre dos componentes de este tipo, transmisor de la sonda y receptor de la antena, es importante que ambos estén configurados en la misma frecuencia y canal. Se recomienda que los equipos encargados de la instalación y configuración de componente LoRa RF en la sonda y en la antena se pongan de acuerdo en la configuración del servicio y para hacer las pruebas de transmisión-recepción.  
+
+El software de la antena proporciona el servicio ```reciverService```, que es el encargado de permanecer escuchando para recibir las trazas enviadas por la sonda y guardarlas en ficheros. En esta sección se explica como configurar este servicio.
 
 #### Descripción
 
-Este servicio basa su funcionamiento en un chip de RF Ebyte-E32-TTL-100 que viene ya preconfigurado de fabrica. Se conecta a la raspberry a través del puerto serie y, mediante un adaptador CP2102, a un slot USB.
+Este servicio basa su funcionamiento en un chip de RF Ebyte-E32-TTL-100 que viene ya preconfigurado de fábrica. Se conecta a la Raspberry a través del puerto serie y, mediante un adaptador CP2102, a un slot USB.
 
-Dispone además de dos pines de configuración, M0 y M1 que, para que pueda funcionar en modo recepción y emisión han de estar a 0V (ojo, no en Z).Osea, conectados al GND de la PI.
+Dispone además de dos pines de configuración (M0 y M1) que para que pueda funcionar en modo recepción y emisión han de estar a 0V (ojo, no en Z). O sea, conectados al GND de la Pi.
 
-Para poder configurar los parametros internos del chip M0 y M1 han de configurarse ambos a 1 lógico (3.3V).
+Para poder configurar los parámetros internos del chip M0 y M1 han de configurarse ambos a 1 lógico (3.3V).
 
-Toda la configuración los parametros de LoRa del chip se basa en el parametro de airrate que viene a ser el ancho de banda con el que transmite el chip.
+Toda la configuración de los parámetros LoRa del chip se basa en el parámetro de airrate, que viene a ser el ancho de banda con el que transmite el chip.
 
-Los siguientes parámetros de configuración de LoRa son los que corresponden a cada airRate.
+Los siguientes parámetros de configuración de LoRa son los que corresponden a cada airRate:
 
  - 0.3 Kbps, BW:125Mhz, SF: 12, CR: 4/5
  - 1.2 Kbps, BW:250Mhz, SF: 11, CR: 4/5
@@ -215,7 +217,7 @@ Los siguientes parámetros de configuración de LoRa son los que corresponden a 
  - SF: Spread Factor
  - CR: Coding Rate
 
-La frecuencia central se encuentra en los 433 Mhz.
+La frecuencia central se encuentra en los 433 Mhz. Si se desea cambiar la frecuencia de operación se puede consultar como hacerlo en el siguiente enlace [Cambio de frecuencias LoRa](https://github.com/Yggdrassil80/hab_sonda/edit/master/README.md#cambio-frecuencias-lora).
 
 El airRate por defecto es de 2.4 Kbps. Es decir, la velocidad de transferencia del chip.
 
