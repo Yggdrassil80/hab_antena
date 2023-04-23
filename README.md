@@ -1,30 +1,30 @@
-- [HAB_antena](#hab-antena)
-  * [Introducción](#introducci-n)
+- [HAB_antena](#hab_antena)
+  * [Introducción](#introducción)
   * [Diagrama de sistemas](#diagrama-de-sistemas)
   * [Getting Started](#getting-started)
   * [Configuraciones Genericas](#configuraciones-genericas)
-    + [Generación de Servicios](#generaci-n-de-servicios)
-    + [Activación I2C en Raspbian](#activaci-n-i2c-en-raspbian)
-    + [Configuración USBs](#configuraci-n-usbs)
+    + [Generación de Servicios](#generación-de-servicios)
+    + [Activación I2C en Raspbian](#activación-i2c-en-raspbian)
+    + [Configuración USBs](#configuración-usbs)
   * [Logging](#logging)
-  * [Descripción Componentes](#descripci-n-componentes)
+  * [Descripción Componentes](#descripción-componentes)
     + [GPS](#gps)
-      - [Introducción](#introducci-n-1)
-      - [Descripción](#descripci-n)
-      - [Conexión](#conexi-n)
+      - [Introducción](#introducción-1)
+      - [Descripción](#descripción)
+      - [Conexión](#conexión)
       - [Calibrado](#calibrado)
-      - [Configuración](#configuraci-n)
+      - [Configuración](#configuración)
     + [Servicio de Recepcion](#servicio-de-recepcion)
-      - [Introducción](#introducci-n-2)
-      - [Descripción](#descripci-n-1)
-      - [Configuración](#configuraci-n-1)
+      - [Introducción](#introducción-2)
+      - [Descripción](#descripción-1)
+      - [Configuración](#configuración-1)
     + [Proceso HabMap](#proceso-habmap)
-      - [Introducción](#introducci-n-3)
-      - [Descripción](#descripci-n-2)
-      - [Configuración](#configuraci-n-2)
+      - [Introducción](#introducción-3)
+      - [Descripción](#descripción-2)
+      - [Configuración](#configuración-2)
     + [Servicio de Configuracion](#servicio-de-configuracion)
-      - [Introducción](#introducci-n-4)
-      - [Descripción](#descripci-n-3)
+      - [Introducción](#introducción-4)
+      - [Descripción](#descripción-3)
   * [Hardware](#hardware)
     + [Diagrama del Hardware](#diagrama-del-hardware)
     + [Bus I2C](#bus-i2c)
@@ -34,11 +34,11 @@
 
 # HAB_antena
 
-Proyecto para implementar el software de captura y procesamiento de datos de una sonda HAB que emita con LoRa
+Proyecto para implementar el software de captura y procesamiento de los datos enviados por una sonda HAB que emita con LoRa.
 
 ## Introducción
 
-En este proyecto se describirán los principales componentes de la antena receptora del proyecto hab_sonda.
+En este proyecto se describirán los principales componentes y software necesario para implementar la estación terrestre (antena receptora) del proyecto [hab_sonda](https://github.com/Yggdrassil80/hab_sonda). 
 
 ## Diagrama de sistemas
 
