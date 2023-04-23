@@ -313,21 +313,24 @@ MQTT es un protocolo estándard de mensajería que se utiliza habitualmente para
 
 Este componente basa su funcionamiento en una librería desarrollada para tal efecto que es preciso instalar.
 
-<b>NOTA: </b> Para mas información sobre detalles de funcionamiento, instalación y configuración de esta libreria se pueden encontrar aquí: https://pypi.org/project/habmapslib/ 
+<b>NOTA: </b> Para mas información sobre detalles de funcionamiento, instalación y configuración de esta librería se pueden encontrar aquí: https://pypi.org/project/habmapslib/ 
 
-La instalación de la libreria se efectúa mediante la siguiente instrucción:
+La instalación de la librería se efectúa mediante la siguiente instrucción:
+  ```
+  sudo pip3 install habmapslib
+  ```
 
-```
-sudo pip3 install habmapslib
-```
+La librería está pensada para poder ser arrancada como un servicio más de Raspbian. El software de la antena proporciona un ejecutable que gobierna el servicio de arranque. Se puede ver este ejecutable en el archivo ```/data/hab_antena/habMapService.sh```.
 
-La libreria esta pensada para poder ser arrancada como un servicio mas de raspbian. El ejecutable que gobierna su servicio de arranque es el archivo /data/hab_antena/habMapService.sh.
-
-El servicio que arranca la libreria tiene un archivo .service en /data/hab_antena/services que es instalable a partir de lo explicado en los puntos superiores de este documento o bien utilizando las tools disponinbles en el directorios de /utilities.
+El servicio que arranca la librería tiene un archivo ```.service``` en ```/data/hab_antena/services```, que es instalable a partir de lo explicado en los puntos superiores de este documento o bien utilizando las tools disponinbles en el directorios de /utilities.
 
 #### Configuración
 
-La configuración de este componente se realiza  través de un archivo de configuración adicional, denominado por defecto mqttClient.yaml que tiene el contenido por defecto siguiente:
+La configuración de este componente se realiza a través de un archivo de configuración adicional, que se encuentra en ```/data/hab_antena/conf/mqttClient.yaml```.
+
+La configuración de este archivo difiere de la configuración tradicional que se puede observar en el ```tracker.conf```, donde la configuración es de tipo clave=valor. El archivo ```mqttClient.yaml``` utiliza el formato YAML, que es un estándar de representación de archivos que permite definir una jerarquía de propiedades. En el formato YAML es muy importante mantener una correcta indentación de las propiedades para definir su nivel dentro de la jerarquía.
+
+La configuración que tiene por defecto es la siguiente:
 
 ```
 basestation:
@@ -359,12 +362,9 @@ frame:
   refresh: 1
 ```
 
-La configuración de este archivo difiere de la configuración tradicional que se puede observar en el tracker.conf, donde la configuración es de tipo clave=valor.
-
-Aqui se ha desarrollado vía yaml, que es un estandar de representación de archivos similar al xml.
 
 Los campos a configurar son:
-- <b>basestation.id</b>: identificador de la antena. Es una etiqueta que identificará, para cada traza recibida, que antena la ha recivido.
+- <b>basestation.id</b>: identificador de la antena. Es una etiqueta que identificará, para cada traza recibida, que antena la ha recibido.
 - <b>basestation.appender.</b>: Contiene la información necesaria para procesar la información del servicio de GPS que pudiera estar configurado en la antena. <b>No es preciso alterar esta configuración</b>
 - <b>mqtt.url</b>: Su valor por defecto es localhost, pero en funcionamiento real corresponderá a la url del servidor remoto donde se encuentre la cola mqtt que almacenará los datos que se le envien desde la antena. <b> Este valor será proporcionado el dia del lanzamiento a los responsables de su configuración </b>
 - <b>mqtt.topic</b>: Los servidores mqtt disponen de colas o topics donde se pueden escribir los datos y leerlos posteriormente. En el caso particular de la libreria que se ha creado, tiene el valor "hablistener" y <b>no es preciso alterarlo</b>
@@ -412,7 +412,7 @@ Como se puede observar, los datos de GPS siguen siendo los mismos y el $id igual
 - <b>frame.file</b>: Este valor corresponde al archivo de datos procesado para que sus entradas aparezcan de una linea en una linea. Por defecto: "/data/hab_antena/logs/recivedData.log"
  - <b>frame.refresh</b>: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
 
-<b>IMPORTANTE</b>: Para probar de forma local el envio de datos a la cola mqtt, se puede hacer una instalación local de una y configurar el mqttClient.yaml para que los datos se inyecten alli. El procedimiento de test esta descrito en este [anexo](#MQTTLocal)
+<b>IMPORTANTE</b>: Para probar de forma local el envio de datos a la cola mqtt, se puede hacer una instalación local de una y configurar el mqttClient.yaml para que los datos se inyecten alli. El procedimiento de test esta descrito en este [anexo](#mqttlocal)
 
 ### Servicio de Configuracion
 
