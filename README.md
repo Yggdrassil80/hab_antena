@@ -38,7 +38,7 @@ Proyecto para implementar el software de captura y procesamiento de los datos en
 
 ## Introducción
 
-En este proyecto se describirán los principales componentes y software necesario para implementar la estación terrestre (antena receptora) del proyecto [hab_sonda](https://github.com/Yggdrassil80/hab_sonda). 
+En este proyecto se describirán los principales componentes y software necesarios para implementar la estación terrestre (antena receptora) del proyecto [hab_sonda](https://github.com/Yggdrassil80/hab_sonda). 
 
 ## Diagrama de sistemas
 
@@ -46,60 +46,58 @@ En este proyecto se describirán los principales componentes y software necesari
 
 ## Getting Started
 
-Este apartado esta pensado para, sin tener el detalle exacto de todos los componentes y tecnicas que se explican mas adelante, poner en funcionamiento el software de la antena.
+Este apartado está pensado para, sin tener el detalle exacto de todos los componentes y técnicas que se explican más adelante, poner en funcionamiento el software de la antena.
+
+<b>IMPORTANTE:</b> En este tutorial se asume que se dispone de una Raspberry Pi Zero o equivalente con una versión de Raspbian (o la nueva versión Raspberry Pi OS) instalada correctamente. Si aún no se está en este punto, consultar el apartado de [Instalación Raspberry Pi OS](https://github.com/Yggdrassil80/hab_sonda/#instalación-raspberry-pi-os) y luego volver a este punto.
 
 Los pasos son:
 
-1. Disponer de una raspberry Pi con una versión de raspbian instalada y funcionando correctamente. Ejecutar antes de nada:
+1. Disponer de una raspberry Pi con una versión de Raspbian (o Raspberry Pi OS) instalada y funcionando correctamente. Ejecutar antes de nada:
+   ```
+   sudo apt get update
+   ```
 
-```
-sudo apt get update
-```
+2. Instalar git para poder descargar posteriormente el código de la antena
+   ```
+   sudo apt install git
+   ```
 
-2. Descargar git para poder descargar posteriormente el código de la sonda
+3. Conectar todos los sistemas periféricos (gps y LoRa(rf) principalmente)
 
-```
-sudo apt install git
-```
-
-3. Conectar todos los sistemas periféricos (gps y Lora(rf) principalmente)
-
-4. Instalar librerias de Python3 de apoyo. Las librerias de python necesarias son las siguientes:
+4. Instalar librerías de Python3 de apoyo. Las librerías de Python necesarias son las siguientes:
    * scipy
    * ...
    
-y la forma de instalarlas es mediante la instrucción
-```
+   y la forma de instalarlas es mediante la instrucción:
+   ```
    pip3 install [nombre_libreria]
-```
+   ```
 
-5. Crear el directorio de trabajo, data, mediante las siguientes instrucciones. 
+5. Crear el directorio de trabajo ```data``` mediante las siguientes instrucciones. 
 
-<b>IMPORTANTE:</b> Todas las rutas de configuración estan pensadas sobre este directorio, no se recomienda cambiar a no ser que se tenga muy claro que deberá revisarse ben todo el código para reemplazar este directorio base por cualquier otro que se escoja.
+   <b>IMPORTANTE:</b> Todas las rutas de configuración estan pensadas sobre este directorio. No se recomienda cambiar a no ser que se tenga muy claro que deberá revisarse bien todo el código para reemplazar este directorio base por cualquier otro que se escoja.
+   ```
+   cd /
+   mkdir data
+   sudo chown -R pi:pi data/
+   sudo chmod -R 777 data/
+   ```
 
-```
-cd /
-mkdir data
-sudo chown -R pi:pi data/
-sudo chmod -R 777 data/
-```
-
-6. Realizar un clone del proyecto hab_antena sobre la raspberry
-   El proceso es simple.
+6. Realizar un clone del proyecto hab_antena sobre la Raspberry. El proceso es simple:
    1. Abrir una consola del SO.
-   2. Posicionarse en el directorio que se desee (se recomienda /data)
+   2. Posicionarse en el directorio ```/data``` (o el que se haya creado en el paso 5).
    3. Ejecutar la instrucción de clonado del repositorio "hab_antena" con el comando:
-```
-git clone https://github.com/Yggdrassil80/hab_antena
-```
-<b>IMPORTANTE</b>: Inmediatamente despúes de realizar esta accion, todo el código de la antena se encontrará en /data/hab_antena. Esto implica que todas las configuraciones dependeran de ese path base.
+   
+      ```
+      git clone https://github.com/Yggdrassil80/hab_antena
+      ```
+      <b>IMPORTANTE</b>: Inmediatamente después de realizar esta acción, todo el código de la antena se encontrará en ```/data/hab_antena```. Esto implica que todas las configuraciones dependerán de ese path base.
 
-7. Crear el directorio de logs, mediante la instruccion
-
-```
-cd /data/hab_antena
-mkdir logs
-```
+7. Revisar si existe el directorio ```/data/hab_antena/logs```. Si no está existe, crearlo mediante la instrucción:
+   ```
+   cd /data/hab_antena
+   mkdir logs
+   ```
 
 8. Configurar los archivos de configuración.
    1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/tracker.conf
