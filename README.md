@@ -253,7 +253,7 @@ donde,
 
 #### Introducción
 
-El GPS, permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena no es imprescindible, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy util para determinar distancias reales de recepción o que condiones atmosfericas alteraron o no la misma por ejemplo.
+El GPS permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena no es imprescindible, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy útil para determinar distancias reales de recepción o que condiciones atmosféricas alteraron o no la misma por ejemplo.
 
 #### Descripción
 
@@ -305,11 +305,13 @@ Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad
 
 #### Introducción
 
-Este módulo de software es el encargado de coger los datos recibidos por la antena y llevarlos a una cola mqtt en la nube (o donde se desee). En el proceso enriquecerá los datos recibidos con un identificador de antena y la posición GPS de la misma, si este servicio estuviera configurado. 
+Este módulo de software es el encargado de coger los datos recibidos por la antena y enviarlos a una cola MQTT en la nube (o donde se desee). En el proceso enriquecerá los datos recibidos con un identificador de antena y la posición GPS de la misma, si este servicio estuviera configurado.
+
+MQTT es un protocolo estándard de mensajería que se utiliza habitualmente para el envío de datos en sistemas de Internet Of Things (IoT). Los datos enviados a la cola MQTT pueden ser utilizados por otros sistemas para el procesamiento y visualización de la información en tiempo real. 
 
 #### Descripción
 
-Este componente basa su funcionamiento en una libreria desarrollada para tal efecto que es preciso instalar.
+Este componente basa su funcionamiento en una librería desarrollada para tal efecto que es preciso instalar.
 
 <b>NOTA: </b> Para mas información sobre detalles de funcionamiento, instalación y configuración de esta libreria se pueden encontrar aquí: https://pypi.org/project/habmapslib/ 
 
