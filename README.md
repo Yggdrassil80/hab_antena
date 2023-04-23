@@ -217,7 +217,7 @@ Los siguientes parámetros de configuración de LoRa son los que corresponden a 
  - SF: Spread Factor
  - CR: Coding Rate
 
-La frecuencia central se encuentra en los 433 Mhz. Si se desea cambiar la frecuencia de operación se puede consultar como hacerlo en el siguiente enlace [Cambio de frecuencias LoRa](https://github.com/Yggdrassil80/hab_sonda/edit/master/README.md#cambio-frecuencias-lora).
+La frecuencia central se encuentra en los 433 Mhz. Si se desea cambiar la frecuencia de operación se puede consultar como hacerlo en el siguiente enlace [Cambio de frecuencias LoRa](https://github.com/Yggdrassil80/hab_sonda#cambio-frecuencias-lora).
 
 El airRate por defecto es de 2.4 Kbps. Es decir, la velocidad de transferencia del chip.
 
