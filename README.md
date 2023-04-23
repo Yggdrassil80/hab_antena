@@ -7,16 +7,16 @@
     + [Activación I2C en Raspbian](#activación-i2c-en-raspbian)
     + [Configuración USBs](#configuración-usbs)
   * [Logging](#logging)
-  * [Descripción Componentes](#descripción-componentes)
-    + [GPS](#gps)
+  * [Componentes](#componentes)
+    + [Servicio de Recepcion (LoRa RF)](#servicio-de-recepción-lora-rf)
       - [Introducción](#introducción-1)
       - [Descripción](#descripción)
-      - [Conexión](#conexión)
-      - [Calibrado](#calibrado)
       - [Configuración](#configuración)
-    + [Servicio de Recepcion](#servicio-de-recepcion)
+    + [GPS](#gps)
       - [Introducción](#introducción-2)
       - [Descripción](#descripción-1)
+      - [Conexión](#conexión)
+      - [Calibrado](#calibrado)
       - [Configuración](#configuración-1)
     + [Proceso HabMap](#proceso-habmap)
       - [Introducción](#introducción-3)
@@ -31,6 +31,10 @@
     + [USBs](#usbs)
     + [Listado de componentes](#listado-de-componentes)
     + [Tecnicas y procedimientos de ensamblado](#tecnicas-y-procedimientos-de-ensamblado)
+  * [Anexos](#anexos)
+    + [MQTTLocal](#mqttlocal)
+    + [Cambiar nombre del directorio de proyecto](#cambiar-nombre-del-diretorio-de-proyecto)
+
 
 # HAB_antena
 
@@ -62,7 +66,7 @@ Los pasos son:
    sudo apt install git
    ```
 
-3. Conectar todos los sistemas periféricos (gps y LoRa(rf) principalmente)
+3. Conectar todos los sistemas periféricos (Radio LoRa RF y GPS principalmente)
 
 4. Instalar librerías de Python3 de apoyo. Las librerías de Python necesarias son las siguientes:
    * scipy
@@ -93,33 +97,17 @@ Los pasos son:
       ```
       <b>IMPORTANTE</b>: Inmediatamente después de realizar esta acción, todo el código de la antena se encontrará en ```/data/hab_antena```. Esto implica que todas las configuraciones dependerán de ese path base.
 
-7. Revisar si existe el directorio ```/data/hab_antena/logs```. Si no está existe, crearlo mediante la instrucción:
+7. Revisar si existe el directorio ```/data/hab_antena/logs```. Si no existe, crearlo mediante la instrucción:
    ```
    cd /data/hab_antena
    mkdir logs
    ```
 
 8. Configurar los archivos de configuración.
-   1. Para realizar esta acción se ha de configurar el archivo /data/hab_antena/conf/tracker.conf
-   2. Los detalles de configuración de cada sensor se pueden consultar en la sección de configuración de cada módulo descritos en la sección [Componentes](#componentes)
-   3. Lo siguiente será configurar el archivo mqttClient.yaml. Los detalles de este archivo se encuentran en la sección
+   1. Configurar los sensores de la antena (LoRa RF y GPS). Para realizar esta acción se ha de configurar el archivo ```/data/hab_antena/conf/tracker.conf```. Los detalles de configuración de cada sensor se pueden consultar en la sección de configuración de cada módulo descritos en la sección [Componentes/LoRa RF](#servicio-de-recepción-lora-rf) y [Componentes/GPS](#gps).
+   2. Configurar el archivo ```mqttClient.yaml```, que utilizará proceso principal para hacer el envío de los datos a un sistema externo para hacer su seguimiento en tiempo real. Los detalles de este archivo se encuentran en la sección [Proceso HabMap](#proceso-habmap).
 
-* NOTA *: Llegado es punto, si se deseara, se puede cambiar el nombre "hab_antena" por el nombre que se desee. Esto se puede hacer utilizando los comandos siguiente:
-
-```
-cd /data/hab_antena
-grep -rli 'hab_antena' * | xargs -i@ sed -i 's/hab_antena/nombre_nuevo/g' @
-```
-
-Para que los cambios no provoquen errores de configuración, todo el directorio de configuración debería cambiar también a /data/nombre_nuevo
-
-Esto se puede hacer utilizando el comando:
-
-```
-mv -rf /data/hab_antena /data/nombre_nuevo
-```
-
-9. Configurar y activar los servicios. Ver el punto [Generación de Servicios](#generaci-n-de-servicios)
+9. Configurar y activar los servicios. Ver el punto [Generación de Servicios](#generación-de-servicios)
 
 ## Configuraciones Genericas
 
@@ -194,61 +182,9 @@ Para poder configurarlos en el archivo de configuración, para configurar el RF 
 
 TODO
 
-## Descripción Componentes
+## Componentes
 
-### GPS
-
-#### Introducción
-
-El GPS, permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena no es imprescindible, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy util para determinar distancias reales de recepción o que condiones atmosfericas alteraron o no la misma por ejemplo.
-
-#### Descripción
-
-El GPS sobre el cual se basado este desarrollo es el UBLOX NEO 6M que también se ha demostrado compatible con el UBLOX NEO 7.
-
-Lo que se desea del GPS es que retorne constantemente la altura, la latitud y la longitud de la antena. Estos datos son solo unos de los pocos que se pueden extraer del GPS.
-
-Actualmente, los chips de UBLOX operan con protocolo NMEA2.0 que se basa en la generación de una série de mensajes con datos de tiempos, velocidades, posiciones, etc.
-
-Se puede encontrar mas información aqui: https://www.gpsinformation.org/dale/nmea.htm
-
-Se ha desarrollado un módulo propio que interpreta los mensajes NMEA que se consideran interesantes para conocer los datos de altura, longitud y latitud de la antena (GCRMC y el GCACC).
-
-#### Conexión 
-
-Los chips de ublox estan configurados para empezar a volcar sus datos directamente por el puerto serie. Con un simple adaptador a USB (CP2102) se puede utilizar practicamente desde cualquier sistema operativo o plataforma que soporte USB.
-
-#### Calibrado
-
-Este componente no requiere ninguna acción de calibrado especial, ya que tras el encendido empieza a calcular su posición el solo. Para ganar una precisión adecuada de pocos metros, si hace mucho que no se usa, puede requerir unos minutos (5 o 10 min).
-
-#### Configuración
-
-A diferencia de otros componentes, los chips de UBLOX de GPS requieren de configuración inicial dependiendo de lo que se desee hacer con ellos.
-
-En nuestro caso, nuestra aplicación implica que se alcanzaran alturas de entre 30 a 40km en el mejor de los casos, y practicamente ningun GPS convencional mide tales alturas de fabrica.
-
-Además, existe un organismo internacional, COCOM que limita la altura a la cual estos sistemas civiles pueden operar. Nominalmente esta en 18km como maximo, pero dependendiendo del fabricante hay limites en 9 o 12km.
-
-Superado este limite, el comportamiento del componente es diverso, en función del fabricante. En el caso de UBLOX, los datos de lat, lon y altura se quedan "congelados" hasta que se recupera una altura inferior a la del límite de configuración.
-
-Para solventar esto, el componente de GPS desarrollado implementa una libreria especial que permite la configuración de GPS de UBLOX mediante su protocolo de comunicaciones de fabricante (UBX). Luego, cada vez que se arranca el módulo de GPS, se lanza una configuración que activa el modo "airbone<1g" que permite la operación del chip hasta alturas de 50km.
-
-Otras configuraciones adicionales son aplicadas también, como el filtrado de paquetes de NMEA, para solo capturar los GCRMC y GCACC.
-
-Adicionalmente, también existen configuraciones estáticas en el archivo conf/hav.conf
-
-usbGPS=/dev/ttyUSB0
-tiempoMuestreoGPS=10
-
-donde,
-
-- usbGPS: corresponde al puerto USB al que esta conectado el adaptador cp2102 del GPS. Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
-- tiempoMuestreoGPS: que informa sobre el tiempo entre muestras de datos de GPS. Es importante destacar que el GPS no empieza a dar datos de posición de forma inmediata cuando arranca, sino que requeriere unos minutos de "autocalibrado" antes de empezar a recibir paquetes NMEA con datos (GCRMC y GCACC). Luego, suponiendo la configuración correcta de USB, se puede entender como normal que no haya datos de posición nada mas arrancar.
-
-Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad de disponer, en la misma traza recibida, de las coordenadas GPS + altura del HAB y de la antena a la vez, con lo que, eventualmente, se podría calcular la distancia real exacta entre antena y HAB.
-
-### Servicio de Recepcion
+### Servicio de Recepción (LoRa RF)
 
 #### Introducción
 
@@ -312,6 +248,58 @@ dataPathRaw=/data/hab_antena/logs/recivedDataRaw.log
 donde,
 - dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas
 - dataPathRaw: que corresponde al archivo de datos recibidos en raw por parte de la antena.
+
+### GPS
+
+#### Introducción
+
+El GPS, permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena no es imprescindible, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy util para determinar distancias reales de recepción o que condiones atmosfericas alteraron o no la misma por ejemplo.
+
+#### Descripción
+
+El GPS sobre el cual se basado este desarrollo es el UBLOX NEO 6M que también se ha demostrado compatible con el UBLOX NEO 7.
+
+Lo que se desea del GPS es que retorne constantemente la altura, la latitud y la longitud de la antena. Estos datos son solo unos de los pocos que se pueden extraer del GPS.
+
+Actualmente, los chips de UBLOX operan con protocolo NMEA2.0 que se basa en la generación de una série de mensajes con datos de tiempos, velocidades, posiciones, etc.
+
+Se puede encontrar mas información aqui: https://www.gpsinformation.org/dale/nmea.htm
+
+Se ha desarrollado un módulo propio que interpreta los mensajes NMEA que se consideran interesantes para conocer los datos de altura, longitud y latitud de la antena (GCRMC y el GCACC).
+
+#### Conexión 
+
+Los chips de ublox estan configurados para empezar a volcar sus datos directamente por el puerto serie. Con un simple adaptador a USB (CP2102) se puede utilizar practicamente desde cualquier sistema operativo o plataforma que soporte USB.
+
+#### Calibrado
+
+Este componente no requiere ninguna acción de calibrado especial, ya que tras el encendido empieza a calcular su posición el solo. Para ganar una precisión adecuada de pocos metros, si hace mucho que no se usa, puede requerir unos minutos (5 o 10 min).
+
+#### Configuración
+
+A diferencia de otros componentes, los chips de UBLOX de GPS requieren de configuración inicial dependiendo de lo que se desee hacer con ellos.
+
+En nuestro caso, nuestra aplicación implica que se alcanzaran alturas de entre 30 a 40km en el mejor de los casos, y practicamente ningun GPS convencional mide tales alturas de fabrica.
+
+Además, existe un organismo internacional, COCOM que limita la altura a la cual estos sistemas civiles pueden operar. Nominalmente esta en 18km como maximo, pero dependendiendo del fabricante hay limites en 9 o 12km.
+
+Superado este limite, el comportamiento del componente es diverso, en función del fabricante. En el caso de UBLOX, los datos de lat, lon y altura se quedan "congelados" hasta que se recupera una altura inferior a la del límite de configuración.
+
+Para solventar esto, el componente de GPS desarrollado implementa una libreria especial que permite la configuración de GPS de UBLOX mediante su protocolo de comunicaciones de fabricante (UBX). Luego, cada vez que se arranca el módulo de GPS, se lanza una configuración que activa el modo "airbone<1g" que permite la operación del chip hasta alturas de 50km.
+
+Otras configuraciones adicionales son aplicadas también, como el filtrado de paquetes de NMEA, para solo capturar los GCRMC y GCACC.
+
+Adicionalmente, también existen configuraciones estáticas en el archivo conf/hav.conf
+
+usbGPS=/dev/ttyUSB0
+tiempoMuestreoGPS=10
+
+donde,
+
+- usbGPS: corresponde al puerto USB al que esta conectado el adaptador cp2102 del GPS. Es importante destacar que este puerto puede cambiar en función de los dispositivos conectados a la raspberry y el slot USB donde se conecten, con lo que se deberá comprobar manualmente que esta configuración es correcta.
+- tiempoMuestreoGPS: que informa sobre el tiempo entre muestras de datos de GPS. Es importante destacar que el GPS no empieza a dar datos de posición de forma inmediata cuando arranca, sino que requeriere unos minutos de "autocalibrado" antes de empezar a recibir paquetes NMEA con datos (GCRMC y GCACC). Luego, suponiendo la configuración correcta de USB, se puede entender como normal que no haya datos de posición nada mas arrancar.
+
+Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad de disponer, en la misma traza recibida, de las coordenadas GPS + altura del HAB y de la antena a la vez, con lo que, eventualmente, se podría calcular la distancia real exacta entre antena y HAB.
 
 ### Proceso HabMap
 
@@ -468,3 +456,16 @@ TODO
 
 TODO
 
+### Cambiar nombre del diretorio de proyecto
+
+Si se deseara, se puede cambiar el nombre del diretorio de proyecto "hab_antena" por el nombre que se desee. Esto se puede hacer utilizando los comandos siguientes:
+   ```
+   mv -rf /data/hab_antena /data/nombre_nuevo
+   ```
+
+Para que este cambio no provoque errores de configuración, todas las referencias al directorio de configuración debería cambiar también a ```/data/nombre_nuevo```.   Esto se puede hacer utilizando el comando:
+
+  ```
+  cd /data/hab_antena
+  grep -rli 'hab_antena' * | xargs -i@ sed -i 's/hab_antena/nombre_nuevo/g' @
+  ```
