@@ -1,10 +1,10 @@
 [Unit]
-Description=LOCALMAP Service
+Description=Local Map Service
 After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/data/hab_antena/localMapService.sh
+ExecStart=/usr/bin/python3 /data/hab_antena/localMapService.py
 Restart=always
 RestartSec=0
 

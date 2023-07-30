@@ -13,6 +13,7 @@ import folium
 import time
 import os
 import ConfigHelper
+import logging
 
 #Creacion del logger para los logs del servicio
 loggerLog = logging.getLogger('server_logger')
@@ -92,9 +93,9 @@ def map():
         locations = list(zip(latitudes, longitudes))
         folium.PolyLine(locations=locations, color='red').add_to(pathVuelo)
 
-        listadoSimulaciones = cargarSimulaciones()
+        listadoSimulaciones = cargarSimulaciones(SIMULATION_PATH)
         #[[[[latData],[lonData]],[burstLat, burstLon],[LandLat, LandLon]]]
-        loggerLog.info(listadoSimulaciones)
+        #loggerLog.info(listadoSimulaciones)
 
         i=0
         for simulacion in listadoSimulaciones:
@@ -117,6 +118,7 @@ def map():
                 icon=folium.DivIcon(html=f"""<img src="https://cdn-icons-png.flaticon.com/512/1086/1086043.png" width="20" height="20">""")
             ).add_to(pathSimul)
             #Adicion capas al mapa
+            i = i + 1
             pathSimul.add_to(m)
         
         #Adicion capas al mapa
@@ -142,7 +144,7 @@ def cargarSimulaciones(pathBase):
         loggerLog.info("[localMapService][cargarSimulaciones] Cargando Simulacion " + str(simulacion) + "...");
         datosSim = []
         pathSim = []
-        with open(simulacion, 'r') as f:
+        with open(SIMULATION_PATH + simulacion, 'r') as f:
             data = f.read()
         Bs_data = BeautifulSoup(data, "xml")
         coordenadas = Bs_data.coordinates
@@ -177,7 +179,7 @@ def cargarSimulaciones(pathBase):
         datosSim.append(pathSim)
         datosSim.append(locSimBurst)
         datosSim.append(locSimLand)
-        listadoSimulaciones(datosSim)
+        listadoSimulaciones.append(datosSim)
         loggerLog.info("[localMapService][cargarSimulaciones] Simulacion " + str(simulacion) + " cargada OK");
 
     return listadoSimulaciones
@@ -186,7 +188,9 @@ def cargarSimulaciones(pathBase):
 
 if __name__ == '__main__':
     loggerLog.info("[localMapService][Main] Arrancando Mapa Local...");
-    app.run()
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
+    #app.run()
     loggerLog.info("[localMapService][Main] Mapa Arrancado OK");
 
 #####################################################################################
