@@ -84,6 +84,16 @@ def getDataFileName():
         #loggerLog.error("[ConfigHelper][getAntenaID] ERROR");
         return "defectID"
 
+def getSimulationPath():
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read([CONF_PATH])
+        t = cfg.get("TCK", "simulationPath")
+        return str(t)
+    except:
+        #loggerLog.error("[ConfigHelper][getSimulationPath] ERROR");
+        return "defectID"
+
 def getTiempoEntreMov():
     try:
         cfg = configparser.ConfigParser()
