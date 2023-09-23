@@ -66,11 +66,14 @@ Los pasos son:
    sudo apt install git
    ```
 
-3. Conectar todos los sistemas periféricos (Radio LoRa RF y GPS principalmente)
+3. Conectar todos los sistemas periféricos (Radio LoRa RF principalmente)
 
 4. Instalar librerías de Python3 de apoyo. Las librerías de Python necesarias son las siguientes:
    * scipy
-   * ...
+   * folium
+   * Flask
+   * beautifulsoup4
+   * waitress
    
    y la forma de instalarlas es mediante la instrucción:
    ```
@@ -176,6 +179,8 @@ Para poder configurarlos en el archivo de configuración, p.e. para configurar e
 - /dev/ttyUSB1
 ...
 
+*IMPORTANTE*: En una antena básica, que solo tenga conectado el LoRa receptor, sin el GPS, el único puerto de USB que se verá será el *ttyUSB0*. 
+
 ## Logging
 
 TODO
@@ -233,7 +238,7 @@ Existe configuración estática para este servicio en el archivo de configuraci�
 
 En en tag [RF] se configuran las siguientes propiedades:
   ```
-  usbRF=/dev/ttyUSB2
+  usbRF=/dev/ttyUSB0
   ```
 donde,
 
@@ -246,14 +251,15 @@ dataPathRaw=/data/hab_antena/logs/recivedDataRaw.log
 ```
 
 donde,
-- dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas.
-- dataPathRaw: que corresponde al archivo de datos en bruto recibidos por parte de la antena.
+- dataPath: corresponde al archivo donde se dejaran los datos recibidos y preparados para ser consumidos por el servicio de mapas en la nube
+- dataPathRaw: que corresponde al archivo de datos en bruto recibidos por parte de la antena, que puede ser consumido directamente por el servidor de mapas local.
 
 ### GPS
 
 #### Introducción
 
-El GPS permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena no es imprescindible, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy útil para determinar distancias reales de recepción o que condiciones atmosféricas alteraron o no la misma por ejemplo.
+El GPS permite determinar la ubicación exacta de la antena. La configuración de este módulo para la antena *no es imprescindible*, pero otorga la posibilidad de añadir las coordenadas GPS de la antena que recibió los datos e incorporarlos en la traza capturada. Esto puede ser muy útil para determinar distancias reales de recepción o que condiciones atmosféricas alteraron o no la misma por ejemplo.
+*IMPORTANTE*: Los datos de GPS solo se tienen en cuenta en la traza procesada sobre el archivo ubicado en "dataPath" y solo se podrian ver en el servidor de mapas en la nube, no el servidor de mapas local.
 
 #### Descripción
 
@@ -304,6 +310,8 @@ Finalmente, recordar que el uso de este módulo en la antena otorga la capacidad
 ### Proceso HabMap
 
 #### Introducción
+
+*IMPORTANTE*: Si solo se va a trabajar con el mapa local, obviar este punto.
 
 Este módulo de software es el encargado de coger los datos recibidos por la antena y enviarlos a una cola MQTT en la nube (o donde se desee). En el proceso enriquecerá los datos recibidos con un identificador de antena y la posición GPS de la misma, si este servicio estuviera configurado.
 
@@ -413,6 +421,53 @@ Como se puede observar, los datos de GPS siguen siendo los mismos y el $id igual
  - <b>frame.refresh</b>: Tiempo en segundos que el módulo comprobará si han aparecido lineas de trazas recibidas y procesadas nuevas en el archivo anterior.
 
 <b>IMPORTANTE</b>: Para probar de forma local el envio de datos a la cola mqtt, se puede hacer una instalación local de una y configurar el mqttClient.yaml para que los datos se inyecten alli. El procedimiento de test esta descrito en este [anexo](#mqttlocal)
+
+### Servicio de Mapas Local
+
+#### Introducción
+Este servicio se trata de un pequeño servidor de mapas local que se instala en la antena receptora y se levanta en la propia antena. Sirve para poder tener una solución de mapas local sin necesidad de disponer del servidor remoto de mapas de la nube.
+
+#### Descripción
+El mapa dispone de dos funciones básicas, la primera es poder presentar los datos de posicionamiento básicos de la sonda en base a los datos en raw capturados por la antena. Esto quiere decir que, con la configuración base con la se que descarga del git, esta escuchando los datos que aparezcan en /data/hab_antena/logs/recivedDataRaw.log.
+
+Es importante entender que el procesamiento de los datos de telemetria de la antena solo va a ser de posicionamiento, con lo que, si estos vienen mal, el mapa no lo podrá pintarlos adecuadamente.
+
+*IMPORTANTE*:Puesto que los errores son normales en la recepción, hasta que no aparezca una traza despues de un salto de linea que contenga datos de posicionamiento válidos, el mapa, puede mostrar errores o simplemente no mostrar nada.
+
+La otra funcionalidad básica del mapa es la posibilidad de ir pintando, como capas, las simulaciones realizadas con https://predict.sondehub.org/ mediante la carga de dichas simulaciones en formato kml dentro del directorio de simulaciones. Cualquier archivo kml
+[imagen del kml]
+
+El efecto será que el mapa se visualizarán las simulaciones que se vayan realizando y la trayectoria actual en base a los datos recibidos.
+
+#### Configuración
+
+La configuración es simple, basta con actualizar el archivo de configuración de la antena tracker.conf con la siguiente información debajo del bloque [TCK]
+
+```
+dataPathRaw=/data/hab_antena/logs/recivedDataRaw.log
+simulationPath=/data/hab_antena/simulations/
+```
+
+#### Uso
+El uso nuevamente es simple, basta con tener la rapsberry de la antena conectada con un PC normal en una red local, por ejemplo una red local generada por un movil y donde el PC y la PI estén conectados.
+Se ha de averigüar la IP de la red local de la PI que hace de antena y abrir una ventana de un navegador en el PC y poner lo siguiente:
+
+```
+http://{IP_local_pi}:8008/map
+```
+Por ejemplo, podria ser:
+```
+http://192.168.43.119:8080/map
+```
+Inmediatamente después se cargaría el mapa con la información de telemetria que se ubiera recibido y con las simulaciones que se ubieran cargado dentro del directorio de simulaciones.
+
+[mapa]
+
+*IMPORTANTE*: Las simulaciones, una vez exportadas desde https://predict.sondehub.org deben llevarse al directorio configurado en el archivo tracker.conf de simulaciones. Esto se puede hacer con cualquier cliente SSH convencional, moba, putty, ....
+
+Un detalle adicional es que, las diferentes simulaciones, así como la trayectoria actual de la sonda, si fuera el caso, se comportan como capas dentro del mapa, a través del selector de capas que aparece en el mapa en el cuadrante superior derecho se pueden activar/desactivar las que se deseen.
+
+Por último, y muy importante, el mapa, en su versión actual, NO SE REFRESCA SOLO, y se ha de recargar la ventana del navegador para que se actualicen los datos.
 
 ### Servicio de Configuracion
 
