@@ -435,7 +435,8 @@ Es importante entender que el procesamiento de los datos de telemetria de la ant
 *IMPORTANTE*:Puesto que los errores son normales en la recepción, hasta que no aparezca una traza despues de un salto de linea que contenga datos de posicionamiento válidos, el mapa, puede mostrar errores o simplemente no mostrar nada.
 
 La otra funcionalidad básica del mapa es la posibilidad de ir pintando, como capas, las simulaciones realizadas con https://predict.sondehub.org/ mediante la carga de dichas simulaciones en formato kml dentro del directorio de simulaciones. Cualquier archivo kml
-[imagen del kml]
+
+![ConectorConfiguracionEbyte](/docs/images/kml_example.png)
 
 El efecto será que el mapa se visualizarán las simulaciones que se vayan realizando y la trayectoria actual en base a los datos recibidos.
 
@@ -461,7 +462,7 @@ http://192.168.43.119:8080/map
 ```
 Inmediatamente después se cargaría el mapa con la información de telemetria que se ubiera recibido y con las simulaciones que se ubieran cargado dentro del directorio de simulaciones.
 
-[mapa]
+![ConectorConfiguracionEbyte](/docs/images/LocalMap_01.png)
 
 *IMPORTANTE*: Las simulaciones, una vez exportadas desde https://predict.sondehub.org deben llevarse al directorio configurado en el archivo tracker.conf de simulaciones. Esto se puede hacer con cualquier cliente SSH convencional, moba, putty, ....
 
